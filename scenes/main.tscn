@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://qluik00cf67g"]
+
+[ext_resource type="PackedScene" uid="uid://2oiw813gs7wc" path="res://scenes/main_menu.tscn" id="1_e345w"]
+[ext_resource type="PackedScene" uid="uid://b5pglv0m1in2j" path="res://scenes/tcp_connection.tscn" id="2_skhvf"]
+
+[node name="Main" type="Node"]
+
+[node name="MainMenu" parent="." instance=ExtResource("1_e345w")]
+
+[node name="TCPConnection" parent="." instance=ExtResource("2_skhvf")]
