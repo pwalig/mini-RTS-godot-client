@@ -1,5 +1,85 @@
-[gd_scene format=3 uid="uid://2oiw813gs7wc"]
+[gd_scene load_steps=2 format=3 uid="uid://2oiw813gs7wc"]
+
+[ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_g5cdp"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
-anchors_preset = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_g5cdp")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(250, 300)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "Mini RTS"
+horizontal_alignment = 1
+
+[node name="ConnectionData" type="HBoxContainer" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HostLabel" type="Label" parent="PanelContainer/VBoxContainer/ConnectionData"]
+layout_mode = 2
+text = "Host: "
+
+[node name="HostEdit" type="LineEdit" parent="PanelContainer/VBoxContainer/ConnectionData"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "127.0.0.1"
+
+[node name="PortLabel" type="Label" parent="PanelContainer/VBoxContainer/ConnectionData"]
+layout_mode = 2
+text = "Port: "
+
+[node name="PortEdit" type="LineEdit" parent="PanelContainer/VBoxContainer/ConnectionData"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "1234"
+max_length = 6
+virtual_keyboard_type = 3
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+text = "Nick: "
+
+[node name="NickEdit" type="LineEdit" parent="PanelContainer/VBoxContainer/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "your nick"
+alignment = 1
+
+[node name="JoinGameButton" type="Button" parent="PanelContainer"]
+custom_minimum_size = Vector2(150, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+theme_override_font_sizes/font_size = 20
+text = "Join game"
+
+[connection signal="pressed" from="PanelContainer/JoinGameButton" to="." method="_on_join_game_button_pressed"]
