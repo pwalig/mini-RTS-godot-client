@@ -4,8 +4,8 @@ signal game_message(Array)
 signal connection_result(bool)
 signal error
 
-@export var host: String = "localhost" : set = _set_host
-@export var port: int = 2137 : set = _set_port
+@export var host: String = "127.0.0.1" : set = _set_host
+@export var port: int = 1234 : set = _set_port
 
 var _msg_queue: Array[PackedByteArray] = []
 var _incoming_msg: Array = []
@@ -24,10 +24,11 @@ func _on_connected() -> void:
 	connection_result.emit(true)
 
 func _on_disconnected() -> void:
-	pass
+	error.emit()
 
 func _on_error(err: int) -> void:
 	connection_result.emit(false)
+	error.emit()
 
 func _on_partial_data(data: PackedByteArray) -> void:
 	var decoded: Array = Message.decode(data)

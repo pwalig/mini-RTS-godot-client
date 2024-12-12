@@ -9,6 +9,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 script = ExtResource("1_g5cdp")
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
@@ -35,25 +36,31 @@ theme_override_font_sizes/font_size = 30
 text = "Mini RTS"
 horizontal_alignment = 1
 
-[node name="ConnectionData" type="HBoxContainer" parent="PanelContainer/VBoxContainer"]
+[node name="ConnectionData" type="VBoxContainer" parent="PanelContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="HostLabel" type="Label" parent="PanelContainer/VBoxContainer/ConnectionData"]
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/ConnectionData"]
+layout_mode = 2
+
+[node name="HostLabel" type="Label" parent="PanelContainer/VBoxContainer/ConnectionData/HBoxContainer"]
 layout_mode = 2
 text = "Host: "
 
-[node name="HostEdit" type="LineEdit" parent="PanelContainer/VBoxContainer/ConnectionData"]
+[node name="HostEdit" type="LineEdit" parent="PanelContainer/VBoxContainer/ConnectionData/HBoxContainer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
+size_flags_horizontal = 3
 text = "127.0.0.1"
 
-[node name="PortLabel" type="Label" parent="PanelContainer/VBoxContainer/ConnectionData"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="PanelContainer/VBoxContainer/ConnectionData"]
+layout_mode = 2
+
+[node name="PortLabel" type="Label" parent="PanelContainer/VBoxContainer/ConnectionData/HBoxContainer2"]
 layout_mode = 2
 text = "Port: "
 
-[node name="PortEdit" type="LineEdit" parent="PanelContainer/VBoxContainer/ConnectionData"]
+[node name="PortEdit" type="LineEdit" parent="PanelContainer/VBoxContainer/ConnectionData/HBoxContainer2"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "1234"
@@ -74,8 +81,15 @@ size_flags_horizontal = 3
 placeholder_text = "your nick"
 alignment = 1
 
+[node name="InformLabel" type="Label" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="JoinGameButton" type="Button" parent="PanelContainer"]
-custom_minimum_size = Vector2(150, 100)
+custom_minimum_size = Vector2(150, 80)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 8

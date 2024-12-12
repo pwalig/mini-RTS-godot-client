@@ -1,0 +1,24 @@
+[gd_scene load_steps=5 format=4 uid="uid://bilcgnldwvcxg"]
+
+[ext_resource type="Texture2D" uid="uid://cx64vdtyt6dkm" path="res://images/tile-background.png" id="1_bas6j"]
+[ext_resource type="Script" path="res://scripts/camera.gd" id="2_ry7wv"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_t2lw7"]
+texture = ExtResource("1_bas6j")
+texture_region_size = Vector2i(256, 256)
+0:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_radyp"]
+tile_size = Vector2i(256, 256)
+sources/0 = SubResource("TileSetAtlasSource_t2lw7")
+
+[node name="Game" type="Node2D"]
+
+[node name="Map" type="Node2D" parent="."]
+
+[node name="TileMapLayer" type="TileMapLayer" parent="Map"]
+tile_map_data = PackedByteArray("AAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAABAAEAAAAAAAAAAAAAAAEAAAAAAAAAAAACAAAAAAAAAAAAAAADAAAAAAAAAAAAAAADAAEAAAAAAAAAAAACAAEAAAAAAAAAAAAAAAIAAAAAAAAAAAABAAIAAAAAAAAAAAACAAIAAAAAAAAAAAADAAIAAAAAAAAAAAA=")
+tile_set = SubResource("TileSet_radyp")
+
+[node name="Camera" type="Camera2D" parent="."]
+script = ExtResource("2_ry7wv")
