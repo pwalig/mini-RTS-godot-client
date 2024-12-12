@@ -7,11 +7,6 @@ func _set_need_new_connection(val: bool) -> void:
 	need_new_connection = val
 	%ConnectionData.visible = val
 
-#func _ready():
-	#TcpConnection.host = "127.0.0.1"
-	#TcpConnection.port = 1234
-	#TcpConnection.init_connection()
-
 func _on_join_game_button_pressed():
 	if !%HostEdit.text.is_valid_ip_address():
 		return

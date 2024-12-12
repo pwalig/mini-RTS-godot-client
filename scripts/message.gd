@@ -29,12 +29,18 @@ const _byte_header_map = {
 
 static func encode(type: Type, value = null) -> PackedByteArray:
 	var msg_str: String = _header_byte_map[type]
-	if type == Type.NAME:
-		msg_str += value
+	if value != null:
+		msg_str += " " + value + '\n'
 	return msg_str.to_utf8_buffer()
 
 static func decode(data: PackedByteArray) -> Array:
 	var msg_str: String = data.get_string_from_utf8()
-	var type: Type = _byte_header_map[msg_str.left(1)]
-	msg_str.erase(0)
-	return [type,msg_str]
+	var splitted: PackedStringArray = msg_str.split('\n', false)
+	
+	if splitted[0] in _byte_header_map:
+		var type: Type = _byte_header_map[splitted[0]]
+		if splitted.is_empty(): # one byte message
+			return [type]
+		return [type, splitted.slice(1)]
+	
+	return [null, splitted]

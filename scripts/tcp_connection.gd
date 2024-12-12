@@ -7,7 +7,8 @@ signal error
 @export var host: String = "localhost" : set = _set_host
 @export var port: int = 2137 : set = _set_port
 
-var msg_queue: Array = []
+var _msg_queue: Array[PackedByteArray] = []
+var _incoming_msg: Array = []
 
 func _set_host(new_host: String) -> void:
 	host = new_host
@@ -29,8 +30,15 @@ func _on_error(err: int) -> void:
 	connection_result.emit(false)
 
 func _on_partial_data(data: PackedByteArray) -> void:
-	print("Client data: ", data.get_string_from_utf8())
-
+	var decoded: Array = Message.decode(data)
+	var type = decoded[0]
+	if type != null:
+		if type != Message.Type.BOARD_STATE:
+			game_message.emit([type])
+		# TODO check if message is complete
+	
+	# TODO append data to incoming message and check its completness
+	
 func  _ready():
 	_client.connected.connect(self._on_connected)
 	_client.disconnected.connect(self._on_disconnected)
@@ -41,12 +49,22 @@ func  _ready():
 func init_connection():
 	_client.connect_to_host(host, port)
 
-func send_msg(msg: Array):
-	if msg.size() > 1:
-		msg_queue.append(Message.encode(msg[0], msg[1]))
-	else:
-		msg_queue.append(Message.encode(msg[0]))
+func send_msg(msg: Message.Type):
+	_msg_queue.append(Message.encode(msg))
 
-func _process(delta):
-	if msg_queue.is_empty():
-		return
+func send_msg_val(type: Message.Type, val: String):
+	_msg_queue.append(Message.encode(type, val))
+	
+func _send_partial_msg(msg: PackedByteArray) -> int:
+	var res = _client.send(msg)
+	if res[0] != OK:
+		return 0
+	return res[1]
+
+func _process(_delta):
+	if !_msg_queue.is_empty():
+		var msg: PackedByteArray = _msg_queue.pop_front()
+		var sent = _send_partial_msg(msg)
+		if sent < msg.size():
+			_msg_queue.push_front(msg.slice(sent+1))
+	

@@ -26,9 +26,16 @@ func _on_join_game() -> void:
 		if not connected:
 			printerr("Not connected")
 			return
-
+		var menu = get_node_or_null("MainMenu")
+		if menu == null:
+			printerr("Tried to join from outside menu")
+			return
+		TcpConnection.send_msg_val(Message.Type.NAME, menu.player_nick())
+		TcpConnection.send_msg(Message.Type.JOIN)
+		
 func _on_connection_error() -> void:
 	pass
 
 func _on_game_message(msg: Array) -> void:
-	print(msg)
+	var type: Message.Type = msg[0]
+	print(Message.Type.keys()[type])

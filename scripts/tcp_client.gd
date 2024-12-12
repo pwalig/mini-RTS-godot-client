@@ -16,13 +16,10 @@ func connect_to_host(host: String, port: int) -> void:
 		printerr("Connection error")
 		error.emit(err)
 
-func send(data_to_send: PackedByteArray) -> bool:
+func send(data_to_send: PackedByteArray) -> Array:
 	if _status != _tcp_stream.STATUS_CONNECTED:
-		return false
-	var err: int = _tcp_stream.put_data(data_to_send)
-	if err != OK:
-		return false
-	return true
+		return [1,0]
+	return _tcp_stream.put_partial_data(data_to_send)
 
 func _status_updated(new_status: int) -> void:
 	_status = new_status
