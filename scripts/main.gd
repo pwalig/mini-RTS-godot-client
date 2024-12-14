@@ -32,6 +32,7 @@ var game_s = preload("res://scenes/game.tscn")
 var queue_s = preload("res://scenes/queued.tscn")
 
 var _player_nick: String = ""
+var _game_params: Array = [0,0,0]
 
 func _ready():
 	$MainMenu.join_game.connect(self._on_join_game)
@@ -45,6 +46,7 @@ func _switch_to_game() -> void:
 		child.queue_free()
 	var game = game_s.instantiate()
 	add_child(game)
+	game.init_game(_game_params)
 
 func _switch_to_menu(was_disconnected: bool) -> void:
 	if _game_state in _menu_states:
@@ -93,16 +95,7 @@ func _on_join_game() -> void:
 	print("Nick accepted: ", _player_nick)
 	menu.inform_user("Nick accepted, waiting for join")
 		
-	TcpConnection.send_msg(Message.Type.JOIN)
-	res = await TcpConnection.game_message
-	if res[0] == Message.Type.GAME_JOINED:
-		_game_state = GameState.PLAYING
-		print(res[1])
-	elif res[0] == Message.Type.QUEUED:
-		_game_state = GameState.QUEUE
-	else:
-		printerr("Join Game -> Unexpected response from server")
-	
+	TcpConnection.send_msg(Message.Type.JOIN)	
 		
 func _on_connection_error() -> void:
 	_game_state = GameState.MENU_INIT
@@ -111,16 +104,26 @@ func _on_connection_error() -> void:
 		menu.inform_user("Disconnected from server")
 		menu.need_new_connection = true
 
+func _print_message(msg: Array) -> void:
+	if msg.size() == 1:
+		print(Message.Type.keys()[msg[0]])
+	else:
+		print(Message.Type.keys()[msg[0]], msg[1])
+
 func _on_game_message(msg: Array) -> void:
 	var type: Message.Type = msg[0]
-	if msg.size() == 1:
-		print(Message.Type.keys()[type])
-	else:
-		print(Message.Type.keys()[type], msg[1])
+	
+	if type != Message.Type.BOARD_STATE:
+		_print_message(msg)
 	
 	match type:
 		Message.Type.INVALID:
 			printerr("Client supposed to have sent invalid message")
+		Message.Type.GAME_JOINED:
+			_game_params = msg[1]
+			_game_state = GameState.PLAYING
+		Message.Type.QUEUED:
+			_game_state = GameState.QUEUE
 
 func _input(event):
 	if event.is_action_pressed("ui_cancel"):

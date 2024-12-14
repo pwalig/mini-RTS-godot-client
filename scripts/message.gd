@@ -39,7 +39,7 @@ static func decode(data: PackedByteArray) -> Array:
 	if msg_str[0] in _byte_header_map:
 		var type: Type = _byte_header_map[msg_str[0]]
 		if msg_str.length() == 1: # one byte message
-			return [type]
+			return [type, ""]
 		return [type, msg_str.substr(1)]
 	
 	return [null, msg_str]

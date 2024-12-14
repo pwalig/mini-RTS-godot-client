@@ -1,8 +1,8 @@
 extends Camera2D
 
 const zoom_speed = 0.1
-const max_zoom = Vector2(5,5)
-const min_zoom = Vector2(0.2,0.2)
+const max_zoom = Vector2(1,1)
+const min_zoom = Vector2(0.02,0.02)
 
 var screen_drag : bool = false
 
@@ -19,7 +19,7 @@ func _unhandled_input(event):
 		
 		var delta_zoom = new_zoom - zoom
 		var half_size = get_viewport_rect().size * 0.5
-		print((event.position - half_size))
+		#print((event.position - half_size))
 		if delta_zoom.length() > 0:
 			var off = (event.position - half_size) * (delta_zoom / zoom)
 			zoom = new_zoom
