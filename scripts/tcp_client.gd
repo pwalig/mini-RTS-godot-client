@@ -16,6 +16,9 @@ func connect_to_host(host: String, port: int) -> void:
 		printerr("Connection error")
 		error.emit(err)
 
+func disconnect_from_host() -> void:
+	_tcp_stream.disconnect_from_host()
+
 func send(data_to_send: PackedByteArray) -> Array:
 	if _status != _tcp_stream.STATUS_CONNECTED:
 		return [1,0]
@@ -38,6 +41,8 @@ func _status_updated(new_status: int) -> void:
 
 func _try_recieve_data() -> void:
 	if _status != _tcp_stream.STATUS_CONNECTED:
+		return
+	if data.get_connections().is_empty():
 		return
 	var avaliable: int = _tcp_stream.get_available_bytes()
 	if avaliable <= 0:

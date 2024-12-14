@@ -8,7 +8,6 @@ signal error
 @export var port: int = 1234 : set = _set_port
 
 var _msg_queue: Array[PackedByteArray] = []
-var _incoming_msg: Array = []
 
 func _set_host(new_host: String) -> void:
 	host = new_host
@@ -33,12 +32,51 @@ func _on_error(err: int) -> void:
 func _on_partial_data(data: PackedByteArray) -> void:
 	var decoded: Array = Message.decode(data)
 	var type = decoded[0]
-	if type != null:
-		if type != Message.Type.BOARD_STATE:
+	if type == null:
+		printerr("Invalid message")
+		return
+		
+	match type:
+		Message.Type.GAME_JOINED:
+			await _complete_game_joined_message(decoded[1])
+		Message.Type.BOARD_STATE:
+			await _complete_board_state_message(decoded[1])
+		_:
 			game_message.emit([type])
-		# TODO check if message is complete
+
+func _complete_game_joined_message(msg_part: String) -> void:
+	_client.data.disconnect(self._on_partial_data)
 	
-	# TODO append data to incoming message and check its completness
+	while msg_part.find(";") == -1:
+		var data: PackedByteArray = await _client.data
+		msg_part += data.get_string_from_utf8()
+	
+	var data_extra: PackedStringArray = msg_part.split(";",false,1)
+	var game_joined_msg: PackedStringArray = data_extra[0].split(" ", false)
+	if game_joined_msg.size() != 3:
+		printerr("Incorrect game joined message!")
+	else:
+		if !game_joined_msg[0].is_valid_int():
+			printerr("Incorrect boardX")
+		elif !game_joined_msg[1].is_valid_int():
+			printerr("Incorrect boardY")
+		elif !game_joined_msg[2].is_valid_int():
+			printerr("Incorrect unitsToWin")
+		else:
+			game_message.emit([Message.Type.GAME_JOINED, [
+				int(game_joined_msg[0]), # boardX
+				int(game_joined_msg[1]), # boardY
+				int(game_joined_msg[2]), # unitsToWin
+			]])
+	
+	_client.data.connect(self._on_partial_data)
+	if data_extra.size() > 1:
+		_client.data.emit(data_extra[1].to_utf8_buffer())
+
+func _complete_board_state_message(msg_part: String) -> void:
+	_client.data.disconnect(self._on_partial_data)
+	
+	_client.data.connect(self._on_partial_data)
 	
 func  _ready():
 	_client.connected.connect(self._on_connected)
@@ -49,6 +87,9 @@ func  _ready():
 
 func init_connection():
 	_client.connect_to_host(host, port)
+
+func disconnect_from_host() -> void:
+	_client.disconnect_from_host()
 
 func send_msg(msg: Message.Type):
 	_msg_queue.append(Message.encode(msg))

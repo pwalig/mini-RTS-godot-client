@@ -12,15 +12,16 @@ func _ready():
 	%PortEdit.text = str(TcpConnection.port)
 
 func _on_join_game_button_pressed():
-	if !%HostEdit.text.is_valid_ip_address():
-		return
-	if !%PortEdit.text.is_valid_int():
-		return
-	var port_int = int(%PortEdit.text)
-	if port_int < 0 or port_int > 65535:
-		return
-	TcpConnection.host = %HostEdit.text
-	TcpConnection.port = int(%PortEdit.text)
+	if need_new_connection:
+		if !%HostEdit.text.is_valid_ip_address():
+			return
+		if !%PortEdit.text.is_valid_int():
+			return
+		var port_int = int(%PortEdit.text)
+		if port_int < 0 or port_int > 65535:
+			return
+		TcpConnection.host = %HostEdit.text
+		TcpConnection.port = int(%PortEdit.text)
 	join_game.emit()
 
 func player_nick() -> String:

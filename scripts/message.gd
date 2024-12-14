@@ -3,9 +3,9 @@ class_name Message extends Script
 enum Type{
 	NAME,
 	JOIN,
+	GAME_JOINED,
 	QUIT,
 	INVALID,
-	ACCEPTED,
 	QUEUED,
 	YES,
 	NO,
@@ -20,7 +20,7 @@ const _header_byte_map = {
 
 const _byte_header_map = {
 	"i": Type.INVALID,
-	"a": Type.ACCEPTED,
+	"g": Type.GAME_JOINED,
 	"q": Type.QUEUED,
 	"y": Type.YES,
 	"n": Type.NO,
@@ -35,12 +35,11 @@ static func encode(type: Type, value = null) -> PackedByteArray:
 
 static func decode(data: PackedByteArray) -> Array:
 	var msg_str: String = data.get_string_from_utf8()
-	var splitted: PackedStringArray = msg_str.split('\n', false)
 	
-	if splitted[0] in _byte_header_map:
-		var type: Type = _byte_header_map[splitted[0]]
-		if splitted.is_empty(): # one byte message
+	if msg_str[0] in _byte_header_map:
+		var type: Type = _byte_header_map[msg_str[0]]
+		if msg_str.length() == 1: # one byte message
 			return [type]
-		return [type, splitted.slice(1)]
+		return [type, msg_str.substr(1)]
 	
-	return [null, splitted]
+	return [null, msg_str]
