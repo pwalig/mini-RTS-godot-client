@@ -115,6 +115,7 @@ func _on_game_message(msg: Array) -> void:
 	
 	if type != Message.Type.BOARD_STATE:
 		_print_message(msg)
+	#_print_message(msg)
 	
 	match type:
 		Message.Type.INVALID:

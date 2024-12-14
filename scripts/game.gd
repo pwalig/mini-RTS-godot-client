@@ -8,4 +8,6 @@ func _ready():
 	TcpConnection.game_message.connect(self._on_game_message)
 	
 func _on_game_message(msg: Array) -> void:
-	pass
+	match msg[0]:
+		Message.Type.BOARD_STATE:
+			$Map.update_state(msg[1])
