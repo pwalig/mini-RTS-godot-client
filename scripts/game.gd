@@ -9,5 +9,7 @@ func _ready():
 	
 func _on_game_message(msg: Array) -> void:
 	match msg[0]:
-		Message.Type.BOARD_STATE:
-			$Map.update_state(msg[1])
+		Message.Type.PLAYERS_STATE:
+			$Map.update_players(msg[1])
+		Message.Type.RESOURCES_STATE:
+			$Map.update_resources(msg[1])

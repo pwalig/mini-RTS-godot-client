@@ -5,6 +5,8 @@ signal disconnected
 signal data
 signal error
 
+const DATA_UTF8 = true
+
 var _tcp_stream: StreamPeerTCP = StreamPeerTCP.new()
 var _status: int
 	
@@ -51,7 +53,8 @@ func _try_recieve_data() -> void:
 	if partial_data[0] != OK:
 		printerr("get_partial_data error")
 		return
-	data.emit(partial_data[1])
+		
+	data.emit(partial_data[1].get_string_from_utf8())
 
 func _ready():
 	_status = _tcp_stream.get_status()

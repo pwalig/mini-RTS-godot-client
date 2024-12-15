@@ -113,7 +113,7 @@ func _print_message(msg: Array) -> void:
 func _on_game_message(msg: Array) -> void:
 	var type: Message.Type = msg[0]
 	
-	if type != Message.Type.BOARD_STATE:
+	if type != Message.Type.RESOURCES_STATE:
 		_print_message(msg)
 	#_print_message(msg)
 	
