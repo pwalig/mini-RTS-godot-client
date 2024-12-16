@@ -1,7 +1,8 @@
 extends Node2D
 
-func init_game(params: Array) -> void:
+func init_game(player_nick: String, params: Array) -> void:
 	print("game init")
+	$Map.player_nick = player_nick
 	$Map.setup_ground(params[0], params[1])
 
 func _ready():

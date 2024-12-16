@@ -26,6 +26,10 @@ window/size/viewport_height=540
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 
+[global_group]
+
+player_units="Units owned by local player"
+
 [input]
 
 main_click={

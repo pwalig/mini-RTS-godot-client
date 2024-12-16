@@ -18,8 +18,9 @@ tile_set = ExtResource("1_3oqo2")
 z_index = 1
 tile_set = ExtResource("1_3oqo2")
 
+[node name="units" type="Node2D" parent="Map"]
+
 [node name="Camera" type="Camera2D" parent="."]
+unique_name_in_owner = true
 zoom = Vector2(0.2, 0.2)
 script = ExtResource("2_ry7wv")
-
-[node name="Units" type="Node2D" parent="."]

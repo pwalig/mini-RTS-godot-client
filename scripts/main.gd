@@ -46,7 +46,7 @@ func _switch_to_game() -> void:
 		child.queue_free()
 	var game = game_s.instantiate()
 	add_child(game)
-	game.init_game(_game_params)
+	game.init_game(_player_nick,_game_params)
 
 func _switch_to_menu(was_disconnected: bool) -> void:
 	if _game_state in _menu_states:

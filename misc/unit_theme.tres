@@ -1,0 +1,31 @@
+[gd_resource type="Theme" load_steps=4 format=3 uid="uid://m7nq75i0ios4"]
+
+[ext_resource type="FontFile" uid="uid://dht8jsiwr6gwb" path="res://font/Racquetball Regular.ttf" id="1_sj71a"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_elvsu"]
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_p8ivl"]
+bg_color = Color(1, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+
+[resource]
+default_font = ExtResource("1_sj71a")
+default_font_size = 25
+Label/colors/font_color = Color(1, 1, 1, 1)
+Label/colors/font_outline_color = Color(0, 0, 0, 1)
+Label/constants/outline_size = 7
+Label/font_sizes/font_size = 40
+ProgressBar/constants/outline_size = 7
+ProgressBar/font_sizes/font_size = 20
+ProgressBar/styles/background = SubResource("StyleBoxFlat_elvsu")
+ProgressBar/styles/fill = SubResource("StyleBoxFlat_p8ivl")
