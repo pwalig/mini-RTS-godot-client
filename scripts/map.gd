@@ -23,16 +23,17 @@ func update_resources(resources: Array) -> void:
 func update_players(players: Dictionary) -> void:
 	for player in players.keys():
 		for unit_data in players[player]:
-			var pos = Vector2(unit_data[1], unit_data[2])
-			var unit: Unit = $units.get_node_or_null(unit_data[0])
+			var pos = Vector2i(unit_data[1], unit_data[2])
+			var unit_id = player + unit_data[0]
+			var unit: Unit = $units.get_node_or_null(unit_id)
 			if unit == null:
 				unit = unit_s.instantiate()
-				unit.name = unit_data[0]
+				unit.name = unit_id
 				unit.owner_nick = player
 				$units.add_child(unit)
 				if player == player_nick: # unit belongs to local player
 					if get_tree().get_node_count_in_group("player_units") == 0:
-						%Camera.position = CONFIG.tilesize * pos
+						%Camera.position = CONFIG.tilesize * Vector2(pos)
 					unit.add_to_group("player_units")
 			unit.cell_position = pos
 			unit.hp = unit_data[3]

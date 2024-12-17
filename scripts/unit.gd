@@ -8,10 +8,22 @@ func set_owner_nick(nick: String) -> void:
 	var hue = (abs(hash(nick)) % 256) / 256.0
 	self_modulate = Color.from_hsv(hue, 1.0, 1.0)
 
-@export var cell_position: Vector2 = Vector2(0,0) : set = set_cell_position # might not be Vector2i while moving
-func set_cell_position(pos: Vector2) -> void:
+@export var cell_position: Vector2i = Vector2i(-1,-1) : set = set_cell_position
+func set_cell_position(pos: Vector2i) -> void:
+	if cell_position == pos:
+		return
+	flip_h = pos.x < cell_position.x
+	if cell_position == Vector2i(-1,-1):
+		cell_position = pos
+		return
 	cell_position = pos
-	position = pos * 256.0
+	call_deferred("_move", Vector2(pos) * CONFIG.tilesize)
+
+func _move(pos: Vector2) -> void:
+	play("run")
+	var pos_tween = create_tween()
+	pos_tween.tween_property(self, "position", pos, 0.2)
+	pos_tween.tween_callback(play.bind("idle"))
 
 @export var hp: int = 10 : set = set_hp
 func set_hp(new_hp: int) -> void:
