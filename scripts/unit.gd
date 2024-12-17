@@ -15,6 +15,7 @@ func set_cell_position(pos: Vector2i) -> void:
 	flip_h = pos.x < cell_position.x
 	if cell_position == Vector2i(-1,-1):
 		cell_position = pos
+		position = Vector2(pos) * CONFIG.tilesize
 		return
 	cell_position = pos
 	call_deferred("_move", Vector2(pos) * CONFIG.tilesize)
