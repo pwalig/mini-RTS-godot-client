@@ -1,5 +1,7 @@
 extends Camera2D
 
+signal zoom_change(float)
+
 const zoom_speed = Vector2(0.2,0.2)
 const max_zoom = Vector2(1,1)
 const min_zoom = Vector2(0.02,0.02)
@@ -21,6 +23,7 @@ func _unhandled_input(event):
 		zoom = new_zoom
 		position += mouse_pos - get_global_mouse_position()
 		force_update_transform()
+		zoom_change.emit(zoom.x)
 			
 	if screen_drag and event is InputEventMouseMotion:
 		position -= event.relative * (Vector2.ONE / zoom)

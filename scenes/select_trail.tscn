@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://b6w3qgrchnfyj"]
+
+[ext_resource type="Texture2D" uid="uid://dcyyvs22p7epv" path="res://images/tile-frame.png" id="1_lsyix"]
+[ext_resource type="Script" path="res://scripts/select_trail.gd" id="2_u6u6n"]
+
+[node name="SelectTrail" type="Sprite2D"]
+texture = ExtResource("1_lsyix")
+centered = false
+script = ExtResource("2_u6u6n")
