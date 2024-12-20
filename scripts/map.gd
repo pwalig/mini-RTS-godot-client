@@ -2,14 +2,8 @@ extends Node2D
 
 @onready var astar = AStarGrid2D.new()
 
-var trail_s = preload("res://scenes/select_trail.tscn")
-var hovered_cell = Vector2i(-1,-1)
-
 var unit_s = preload("res://scenes/unit.tscn")
 var player_nick: String = ""
-
-var _units_selected: bool = false
-var _selection_rect: Rect2i = Rect2i(0,0,0,0)
 
 func setup_ground(boardX: int, boardY: int) -> void:
 	for y in range(boardY):
@@ -50,43 +44,10 @@ func update_players(players: Dictionary) -> void:
 
 func _ready():
 	astar.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_NEVER
+	%SelectRect.selected_units.connect(self._on_selected_units)
+	%SelectRect.active = true
 
-func _get_mouse_cell() -> Vector2i:
-	return $ground.local_to_map(get_local_mouse_position())
 
-func _get_units_by_rect(rect: Rect2i) -> Array:
-	var r = rect.abs().grow_individual(0,0,1,1)
-	var ret = []
-	for unit: Unit in get_tree().get_nodes_in_group("player_units"):
-		if r.has_point(unit.cell_position):
-			ret.append(unit)
-	return ret
 
-func _input(event):
-	if event is InputEventMouseButton:
-		if event.is_action_pressed("main_click"):
-			var cell_pos = _get_mouse_cell()
-			if !_units_selected:
-				_selection_rect = Rect2i(cell_pos, Vector2i.ZERO)
-				%SelectRect.draw_select_rect(_selection_rect)
-				%SelectRect.visible = true
-				print("pressed")
-				
-		elif event.is_action_released("main_click"):
-			%SelectRect.visible = false
-			var cell_pos = _get_mouse_cell()
-			print(_selection_rect)
-			print(_get_units_by_rect(_selection_rect))
-			return
-	elif event is InputEventMouseMotion:
-		var cell_pos = _get_mouse_cell()
-		if hovered_cell == cell_pos:
-			return
-		hovered_cell = cell_pos
-		var trail = trail_s.instantiate()
-		trail.position = %Select.position
-		$selection.add_child(trail)
-		%Select.position = Vector2(hovered_cell) * CONFIG.tilesize
-		
-		_selection_rect.end = cell_pos
-		%SelectRect.draw_select_rect(_selection_rect)
+func _on_selected_units(units: Array) -> void:
+	print(units)
