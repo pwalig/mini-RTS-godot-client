@@ -4,16 +4,12 @@ signal selected_units(Array)
 
 @export var rel_width: float = 2.0
 
-var trail_s = preload("res://scenes/select_trail.tscn")
-var hovered_cell = Vector2i(-1,-1)
-
 var _selection_rect: Rect2i = Rect2i(0,0,0,0)
 
 var active: bool = false
 func _set_active(a: bool) -> void:
 	if a:
-		var cell_pos = _get_mouse_cell()
-		_selection_rect = Rect2i(cell_pos, Vector2i.ZERO)
+		_selection_rect.size = Vector2i.ZERO
 		visible = true
 	else:
 		visible = false
@@ -21,6 +17,9 @@ func _set_active(a: bool) -> void:
 
 func _ready():
 	%Camera.zoom_change.connect(self._on_zoom_change)
+	%Select.cell_clicked.connect(self._on_cell_clicked)
+	%Select.cell_released.connect(self._on_cell_released)
+	%Select.cell_hovered.connect(self._on_cell_hovered)
 
 func _get_mouse_cell() -> Vector2i:
 	return %ground.local_to_map(get_local_mouse_position())
@@ -44,32 +43,21 @@ func _get_selected_units() -> Array:
 			ret.append(unit)
 	return ret
 
-func _input(event):
+func _on_cell_clicked(cell: Vector2i) -> void:
 	if !active:
 		return
-	if event is InputEventMouseButton:
-		if event.is_action_pressed("main_click"):
-			var cell_pos = _get_mouse_cell()
-			_selection_rect = Rect2i(cell_pos, Vector2i.ZERO)
-			_draw_select_rect()
-			visible = true
-				
-		elif event.is_action_released("main_click"):
-			visible = false
-			var units = _get_selected_units()
-			if units:
-				selected_units.emit(units)
-			return
-			
-	elif event is InputEventMouseMotion:
-		var cell_pos = _get_mouse_cell()
-		if hovered_cell == cell_pos:
-			return
-		hovered_cell = cell_pos
-		var trail = trail_s.instantiate()
-		trail.position = %Select.position
-		add_sibling(trail)
-		%Select.position = Vector2(hovered_cell) * CONFIG.tilesize
-		
-		_selection_rect.end = cell_pos
-		_draw_select_rect()
+	visible = true
+	_selection_rect = Rect2i(cell, Vector2i.ZERO)
+	_draw_select_rect()
+
+func _on_cell_released(_cell: Vector2i) -> void:
+	if !active:
+		return
+	visible = false
+	var units = _get_selected_units()
+	if units:
+		selected_units.emit(units)
+
+func _on_cell_hovered(cell: Vector2i) -> void:
+	_selection_rect.end = cell
+	_draw_select_rect()
