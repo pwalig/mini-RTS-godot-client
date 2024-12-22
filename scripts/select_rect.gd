@@ -39,7 +39,7 @@ func _draw_select_rect() -> void:
 func _get_selected_units() -> Array:
 	var r = _selection_rect.abs().grow_individual(0,0,1,1)
 	var ret = []
-	for unit: Unit in get_tree().get_nodes_in_group("player_units"):
+	for unit: PlayerUnit in get_tree().get_nodes_in_group("player_units"):
 		if r.has_point(unit.cell_position):
 			ret.append(unit)
 	return ret

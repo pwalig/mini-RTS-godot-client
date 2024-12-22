@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://bilcgnldwvcxg"]
+[gd_scene load_steps=9 format=3 uid="uid://bilcgnldwvcxg"]
 
 [ext_resource type="TileSet" uid="uid://cys1bn3hn4i0r" path="res://misc/game_tileset.tres" id="1_3oqo2"]
 [ext_resource type="Script" path="res://scripts/game.gd" id="1_42pc8"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://scripts/camera.gd" id="2_ry7wv"]
 [ext_resource type="Texture2D" uid="uid://dcyyvs22p7epv" path="res://images/tile-frame.png" id="4_62fe3"]
 [ext_resource type="PackedScene" uid="uid://b5wnwudwah5rq" path="res://scenes/unit.tscn" id="4_c1y57"]
+[ext_resource type="PackedScene" uid="uid://dfwncdrfgt71t" path="res://scenes/player_unit.tscn" id="5_lfx5e"]
 [ext_resource type="Script" path="res://scripts/select_rect.gd" id="6_51i5a"]
 
 [node name="Game" type="Node2D"]
@@ -25,11 +26,14 @@ tile_set = ExtResource("1_3oqo2")
 
 [node name="units" type="Node2D" parent="Map"]
 
-[node name="test_unit" parent="Map/units" groups=["player_units"] instance=ExtResource("4_c1y57")]
+[node name="test_unit" parent="Map/units" instance=ExtResource("4_c1y57")]
 cell_position = Vector2i(0, 0)
 
-[node name="test_unit2" parent="Map/units" groups=["player_units"] instance=ExtResource("4_c1y57")]
+[node name="test_unit2" parent="Map/units" instance=ExtResource("4_c1y57")]
 cell_position = Vector2i(3, 4)
+
+[node name="PlayerUnit" parent="Map/units" groups=["player_units"] instance=ExtResource("5_lfx5e")]
+cell_position = Vector2i(2, 2)
 
 [node name="selection" type="Node2D" parent="Map"]
 
@@ -45,7 +49,7 @@ points = PackedVector2Array(0, 0, 256, 0, 256, 256, 0, 256)
 closed = true
 script = ExtResource("6_51i5a")
 
-[node name="Camera" type="Camera2D" parent="."]
+[node name="Camera" type="Camera2D" parent="." groups=["camera"]]
 unique_name_in_owner = true
 zoom = Vector2(0.2, 0.2)
 script = ExtResource("2_ry7wv")

@@ -1,0 +1,57 @@
+[gd_scene load_steps=6 format=3 uid="uid://dfwncdrfgt71t"]
+
+[ext_resource type="Shader" path="res://shaders/player_unit.gdshader" id="1_16h3l"]
+[ext_resource type="SpriteFrames" uid="uid://cadit7ce4qfwp" path="res://misc/unit_anim.tres" id="1_38p32"]
+[ext_resource type="Script" path="res://scripts/player_unit.gd" id="2_8cqfp"]
+[ext_resource type="Theme" uid="uid://m7nq75i0ios4" path="res://misc/unit_theme.tres" id="3_gmpln"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5vdn7"]
+shader = ExtResource("1_16h3l")
+shader_parameter/outline_width = 0.02
+shader_parameter/max_width = 0.1
+shader_parameter/outline_color = Color(0, 0, 1, 1)
+shader_parameter/selected = false
+shader_parameter/angle_step = 0.5
+
+[node name="PlayerUnit" type="AnimatedSprite2D"]
+z_index = 1
+material = SubResource("ShaderMaterial_5vdn7")
+sprite_frames = ExtResource("1_38p32")
+animation = &"idle"
+centered = false
+script = ExtResource("2_8cqfp")
+
+[node name="OwnerNickLabel" type="Label" parent="."]
+z_index = -1
+texture_filter = 1
+custom_minimum_size = Vector2(0, 30)
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = -0.1
+anchor_right = 0.5
+anchor_bottom = -0.1
+offset_left = -75.0
+offset_right = 75.0
+offset_bottom = 30.0
+grow_horizontal = 2
+grow_vertical = 0
+theme = ExtResource("3_gmpln")
+text = "JohnDoe123"
+horizontal_alignment = 1
+
+[node name="HPBar" type="ProgressBar" parent="."]
+texture_filter = 1
+custom_minimum_size = Vector2(200, 0)
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -2.0
+offset_top = -27.0
+offset_right = 2.0
+grow_horizontal = 2
+grow_vertical = 0
+theme = ExtResource("3_gmpln")
+step = 1.0
+value = 50.0

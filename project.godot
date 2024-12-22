@@ -29,6 +29,7 @@ window/stretch/aspect="expand"
 [global_group]
 
 player_units="Units owned by local player"
+camera="Current camera"
 
 [input]
 

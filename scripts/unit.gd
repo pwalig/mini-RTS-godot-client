@@ -43,5 +43,15 @@ func die_if_should() -> void:
 func _die() -> void:
 	call_deferred("queue_free")
 
+func _on_zoom_change(zoom: float) -> void:
+	if zoom < CONFIG.LOD_tresh:
+		$OwnerNickLabel.visible = false
+		$HPBar.visible = false
+	else:
+		$OwnerNickLabel.visible = true
+		$HPBar.visible = true
+
 func _ready():
 	$HPBar.max_value = CONFIG.max_unit_health
+	var cam: GameCamera = get_tree().get_first_node_in_group("camera")
+	cam.zoom_change.connect(self._on_zoom_change)
