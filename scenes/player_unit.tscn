@@ -6,6 +6,7 @@
 [ext_resource type="Theme" uid="uid://m7nq75i0ios4" path="res://misc/unit_theme.tres" id="3_gmpln"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_5vdn7"]
+resource_local_to_scene = true
 shader = ExtResource("1_16h3l")
 shader_parameter/outline_width = 0.02
 shader_parameter/max_width = 0.1
@@ -13,7 +14,7 @@ shader_parameter/outline_color = Color(0, 0, 1, 1)
 shader_parameter/selected = false
 shader_parameter/angle_step = 0.5
 
-[node name="PlayerUnit" type="AnimatedSprite2D"]
+[node name="PlayerUnit" type="AnimatedSprite2D" groups=["player_units"]]
 z_index = 1
 material = SubResource("ShaderMaterial_5vdn7")
 sprite_frames = ExtResource("1_38p32")
@@ -55,3 +56,9 @@ grow_vertical = 0
 theme = ExtResource("3_gmpln")
 step = 1.0
 value = 50.0
+
+[node name="Path" type="Line2D" parent="."]
+top_level = true
+position = Vector2(128, 128)
+joint_mode = 2
+end_cap_mode = 2

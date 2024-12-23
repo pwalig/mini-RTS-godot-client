@@ -30,6 +30,8 @@ window/stretch/aspect="expand"
 
 player_units="Units owned by local player"
 camera="Current camera"
+selected_units="Units that are currently selected"
+map=""
 
 [input]
 

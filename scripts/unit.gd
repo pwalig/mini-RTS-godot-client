@@ -12,6 +12,7 @@ func set_owner_nick(nick: String) -> void:
 func set_cell_position(pos: Vector2i) -> void:
 	if cell_position == pos:
 		return
+		
 	flip_h = pos.x < cell_position.x
 	if cell_position == Vector2i(-1,-1):
 		cell_position = pos

@@ -9,7 +9,7 @@ var _selection_rect: Rect2i = Rect2i(0,0,0,0)
 var active: bool = false
 func _set_active(a: bool) -> void:
 	if a:
-		_selection_rect.size = Vector2i.ZERO
+		_selection_rect = Rect2i(Vector2i(-1,-1), Vector2i.ZERO)
 		visible = true
 	else:
 		visible = false
