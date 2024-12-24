@@ -50,6 +50,5 @@ zoom = Vector2(0.2, 0.2)
 script = ExtResource("2_ry7wv")
 
 [node name="TestGameTick" type="Timer" parent="."]
-autostart = true
 
 [connection signal="timeout" from="TestGameTick" to="." method="_new_game_tick"]

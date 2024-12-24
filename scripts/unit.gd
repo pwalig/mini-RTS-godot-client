@@ -24,7 +24,7 @@ func set_cell_position(pos: Vector2i) -> void:
 func _move(pos: Vector2) -> void:
 	play("run")
 	var pos_tween = create_tween()
-	pos_tween.tween_property(self, "position", pos, 0.2)
+	pos_tween.tween_property(self, "position", pos, CONFIG.anim_duration)
 	pos_tween.tween_callback(play.bind("idle"))
 
 @export var hp: int = 10 : set = set_hp
@@ -34,6 +34,17 @@ func set_hp(new_hp: int) -> void:
 
 var keep_alive: bool = false
 var dying: bool = false
+
+func attack() -> void:
+	play("attack")
+	await create_tween().tween_interval(CONFIG.anim_duration).finished
+	play("idle")
+
+func mine() -> void:
+	play("mine")
+	await create_tween().tween_interval(CONFIG.anim_duration).finished
+	play("idle")
+
 func die_if_should() -> void:
 	if !keep_alive and !dying:
 		dying = true
@@ -54,5 +65,6 @@ func _on_zoom_change(zoom: float) -> void:
 
 func _ready():
 	$HPBar.max_value = CONFIG.unitHp
+	hp = CONFIG.unitHp
 	var cam: GameCamera = get_tree().get_first_node_in_group("camera")
 	cam.zoom_change.connect(self._on_zoom_change)

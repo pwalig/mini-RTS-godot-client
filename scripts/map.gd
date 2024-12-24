@@ -9,9 +9,11 @@ var player_nick: String = ""
 
 var unit_map: Dictionary = {}
 
-func setup_ground(boardX: int, boardY: int) -> void:
-	for y in range(boardY):
-		for x in range(boardX):
+var tick_moves_map: Dictionary = {}
+
+func setup_ground() -> void:
+	for y in range(CONFIG.boardXY.y):
+		for x in range(CONFIG.boardXY.x):
 			$ground.set_cell(Vector2i(x,y), 0, Vector2i(0,0))
 	astar.region = $ground.get_used_rect()
 	astar.update()
@@ -81,7 +83,11 @@ func spawn_unit(owner: String, id: String, pos: Vector2i) -> void:
 	unit_map[pos] = unit
 	astar.set_point_solid(pos, true)
 
-func try_move_unit(id: String, pos: Vector2i) -> void:
+func spawn_resource(msg: Array) -> void:
+	# resource hp = msg[1]
+	$resources.set_cell(msg[0], 1, Vector2i.ZERO)
+
+func _try_move_unit(id: String, pos: Vector2i) -> void:
 	if unit_map.has(pos):
 		return
 	var unit = $units.get_node_or_null(id)
@@ -97,3 +103,32 @@ func try_move_unit(id: String, pos: Vector2i) -> void:
 	$unit_markers.erase_cell(unit.cell_position)
 	
 	unit.cell_position = pos
+
+func queue_move_unit(msg: Array) -> void:
+	tick_moves_map[msg[0]] = [Message.Type.MOVE, msg[1]]
+
+func queue_mine_resource(msg: String) -> void:
+	tick_moves_map[msg] = [Message.Type.DIG]
+
+func queue_attack_unit(msg: Array) -> void:
+	tick_moves_map[msg[0]] = [Message.Type.ATTACK, msg[1]]
+
+
+func commit_moves() -> void:
+	for id in tick_moves_map:
+		var type: Message.Type = tick_moves_map[id][0]
+		match type:
+			Message.Type.MOVE:
+				_try_move_unit(id, tick_moves_map[id][1])
+			Message.Type.DIG:
+				var unit = $units.get_node_or_null(id)
+				if unit:
+					unit.call_deferred("mine")
+			Message.Type.ATTACK:
+				var attacker = $units.get_node_or_null(id)
+				var attacked = $units.get_node_or_null(tick_moves_map[id][1])
+				if attacker:
+					attacker.call_deferred("attack")
+				if attacked:
+					attacked.hp -= CONFIG.unitDamage
+	tick_moves_map.clear()

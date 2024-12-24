@@ -7,10 +7,10 @@ signal error
 @export var host: String = "127.0.0.1" : set = _set_host
 @export var port: int = 1234 : set = _set_port
 
-const end_msg = "\n"
-const end_section = ";"
-const end_subsection = ","
-const end_param = " "
+const end_msg = CONFIG.end_msg
+const end_section = CONFIG.end_section
+const end_subsection = CONFIG.end_subsection
+const end_param = CONFIG.end_param
 
 var _msg_queue: Array[PackedByteArray] = []
 
@@ -33,31 +33,6 @@ func _on_disconnected() -> void:
 func _on_error(err: int) -> void:
 	connection_result.emit(false)
 	error.emit()
-
-#func _parse_game_joined(msg: String) -> void:
-	#var params = msg.split(end_param,false)
-	#
-	#if params.size() != 3:
-		#printerr("Incorrect game joined message!")
-		#return
-		#
-	#if !params[0].is_valid_int():
-		#printerr("Incorrect boardX")
-		#return
-		#
-	#if !params[1].is_valid_int():
-		#printerr("Incorrect boardY")
-		#return
-		#
-	#if !params[2].is_valid_int():
-		#printerr("Incorrect unitsToWin")
-		#return
-#
-	#game_message.emit([Message.Type.GAME_JOINED, [
-		#int(params[0]), # boardX
-		#int(params[1]), # boardY
-		#int(params[2]), # unitsToWin
-	#]])
 
 func _parse_players_state(msg: String) -> void:
 	var players_info = msg.split(end_section,false)
@@ -215,7 +190,7 @@ func _parse_field_resource(msg: String) -> void:
 		return
 	game_message.emit([Message.Type.FIELD_RESOURCE,[
 		Vector2i(int(params[0]),int(params[1])),
-		params[2]
+		int(params[2])
 	]])
 	
 func _handle_msg(msg: String) -> void:
@@ -278,8 +253,11 @@ func disconnect_from_host() -> void:
 func send_msg(msg: Message.Type):
 	_msg_queue.append(Message.encode(msg))
 
-func send_msg_val(type: Message.Type, val: String):
-	_msg_queue.append(Message.encode(type, val))
+func send_msg_str(type: Message.Type, val: String):
+	_msg_queue.append(Message.encode_str(type, val))
+
+func send_msg_params(type: Message.Type, params: Array):
+	_msg_queue.append(Message.encode_params(type, params))
 	
 func _send_partial_msg(msg: PackedByteArray) -> int:
 	var res = _client.send(msg)
@@ -293,4 +271,3 @@ func _process(_delta):
 		var sent = _send_partial_msg(msg)
 		if sent < msg.size():
 			_msg_queue.push_front(msg.slice(sent+1))
-	

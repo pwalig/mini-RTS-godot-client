@@ -49,11 +49,17 @@ const _byte_header_map = {
 	"r": Type.RESOURCES_STATE,
 }
 
-static func encode(type: Type, value = null) -> PackedByteArray:
+static func encode(type: Type) -> PackedByteArray:
+	var msg_str: String = _header_byte_map[type] + CONFIG.end_msg
+	return msg_str.to_utf8_buffer()
+
+static func encode_params(type: Type, params: Array) -> PackedByteArray:
 	var msg_str: String = _header_byte_map[type]
-	if value != null:
-		msg_str += " " + value
-	msg_str += '\n'
+	msg_str += CONFIG.end_param.join(params) + CONFIG.end_msg
+	return msg_str.to_utf8_buffer()
+
+static func encode_str(type: Type, val: String) -> PackedByteArray:
+	var msg_str: String = _header_byte_map[type] + val + CONFIG.end_msg
 	return msg_str.to_utf8_buffer()
 
 static func decode(msg_str: String) -> Array:	

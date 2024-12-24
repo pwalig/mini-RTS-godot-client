@@ -31,6 +31,7 @@ func _set_selected(s: bool) -> void:
 func _on_zoom_change(zoom: float):
 	super(zoom)
 	material.set("shader_parameter/outline_width",outline_width/zoom)
+	$Path.width = clampi(int(5/zoom), 10, 50)
 
 func set_target_cell(cell: Vector2i) -> void:
 	selected = false
@@ -120,7 +121,7 @@ func _calculate_next_action() -> Array:
 				_target.clear()
 				return []
 			var cell = _get_display_next_path_point()
-			return [Action.MOVE, cell]
+			return [Action.MOVE, cell_position, cell]
 		Action.MINE:
 			if cell_position == _target[1]:
 				if resources.get_cell_source_id(cell_position) == -1:
@@ -128,21 +129,22 @@ func _calculate_next_action() -> Array:
 					return []
 				return [Action.MINE, cell_position]
 			var cell = _get_display_next_path_point()
-			return [Action.MOVE, cell]
+			return [Action.MOVE, cell_position, cell]
 		Action.ATTACK:
 			if !is_instance_valid(_target[1]):
 				_target.clear()
 				return []
 			if cell_position.distance_to(_target[1].cell_position) <= 1.0:
-				return [Action.ATTACK, _target[1]]
+				print("attack")
+				return [Action.ATTACK, cell_position, _target[1].cell_position]
 			_current_path.clear()
 			var cell = _get_display_next_path_point()
-			return [Action.MOVE, cell]
+			return [Action.MOVE, cell_position, cell]
 	
 	return []
 
 func request_next_action() -> void:
 	var action = _calculate_next_action()
 	if action:
-		if action[0] != Action.MOVE or action[1] != cell_position:
+		if action[0] != Action.MOVE or action[2] != cell_position:
 			request_action.emit(str(name),action)

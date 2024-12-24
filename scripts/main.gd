@@ -32,7 +32,6 @@ var game_s = preload("res://scenes/game.tscn")
 var queue_s = preload("res://scenes/queued.tscn")
 
 var _player_nick: String = ""
-var _game_params: Array = [0,0,0]
 
 func _ready():
 	$MainMenu.join_game.connect(self._on_join_game)
@@ -46,7 +45,7 @@ func _switch_to_game() -> void:
 		child.queue_free()
 	var game = game_s.instantiate()
 	add_child(game)
-	game.init_game(_player_nick,_game_params)
+	game.init_game(_player_nick)
 
 func _switch_to_menu(was_disconnected: bool) -> void:
 	if _game_state in _menu_states:
@@ -81,8 +80,11 @@ func _on_join_game() -> void:
 			printerr("Not connected")
 			_game_state = GameState.MENU_INIT
 			return
-		
-	TcpConnection.send_msg_val(Message.Type.NAME, menu.player_nick())
+	
+	var config = await TcpConnection.game_message
+	# TODO validate player nick using config here
+	
+	TcpConnection.send_msg_str(Message.Type.NAME, menu.player_nick())
 	var res = await TcpConnection.game_message
 	
 	if res[0] != Message.Type.YES:
@@ -113,16 +115,17 @@ func _print_message(msg: Array) -> void:
 func _on_game_message(msg: Array) -> void:
 	var type: Message.Type = msg[0]
 	
-	if type != Message.Type.RESOURCES_STATE:
-		_print_message(msg)
-	#_print_message(msg)
+	#if type != Message.Type.RESOURCES_STATE:
+		#_print_message(msg)
+	_print_message(msg)
 	
 	match type:
-		Message.Type.INVALID:
-			printerr("Client supposed to have sent invalid message")
-		Message.Type.GAME_JOINED:
-			_game_params = msg[1]
-			_game_state = GameState.PLAYING
+		Message.Type.PLAYERS_STATE:
+			if _game_state != GameState.PLAYING:
+				_game_state = GameState.PLAYING
+				get_node("Game")._on_game_message(msg)
+		Message.Type.CONFIGURATION:
+			CONFIG.apply(msg[1])
 		Message.Type.QUEUED:
 			_game_state = GameState.QUEUE
 
