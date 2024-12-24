@@ -34,30 +34,30 @@ func _on_error(err: int) -> void:
 	connection_result.emit(false)
 	error.emit()
 
-func _parse_game_joined(msg: String) -> void:
-	var params = msg.split(end_param,false)
-	
-	if params.size() != 3:
-		printerr("Incorrect game joined message!")
-		return
-		
-	if !params[0].is_valid_int():
-		printerr("Incorrect boardX")
-		return
-		
-	if !params[1].is_valid_int():
-		printerr("Incorrect boardY")
-		return
-		
-	if !params[2].is_valid_int():
-		printerr("Incorrect unitsToWin")
-		return
-
-	game_message.emit([Message.Type.GAME_JOINED, [
-		int(params[0]), # boardX
-		int(params[1]), # boardY
-		int(params[2]), # unitsToWin
-	]])
+#func _parse_game_joined(msg: String) -> void:
+	#var params = msg.split(end_param,false)
+	#
+	#if params.size() != 3:
+		#printerr("Incorrect game joined message!")
+		#return
+		#
+	#if !params[0].is_valid_int():
+		#printerr("Incorrect boardX")
+		#return
+		#
+	#if !params[1].is_valid_int():
+		#printerr("Incorrect boardY")
+		#return
+		#
+	#if !params[2].is_valid_int():
+		#printerr("Incorrect unitsToWin")
+		#return
+#
+	#game_message.emit([Message.Type.GAME_JOINED, [
+		#int(params[0]), # boardX
+		#int(params[1]), # boardY
+		#int(params[2]), # unitsToWin
+	#]])
 
 func _parse_players_state(msg: String) -> void:
 	var players_info = msg.split(end_section,false)
@@ -111,7 +111,6 @@ func _parse_players_state(msg: String) -> void:
 		parsed[p_name] = units
 	
 	game_message.emit([Message.Type.PLAYERS_STATE, parsed])
-			
 
 func _parse_resources_state(msg: String) -> void:
 	var resource_info = msg.split(end_section,false)
@@ -142,6 +141,83 @@ func _parse_resources_state(msg: String) -> void:
 		
 	game_message.emit([Message.Type.RESOURCES_STATE, parsed])
 
+func _parse_configuration(msg: String) -> void:
+	var params = msg.split(end_param,false)
+	if params.size() != 10:
+		printerr("Invalid configuration")
+		return
+		
+	var parsed = []
+	for i in range(9):
+		if !params[i].is_valid_int():
+			printerr("Invalid configuration param: %d = %s" % [i, params[i]])
+			return
+		parsed.append(int(params[i]))
+	parsed.append(params[9])
+	game_message.emit([Message.Type.CONFIGURATION, parsed])
+
+func _parse_join_left(type: Message.Type, msg: String) -> void:
+	game_message.emit([type,msg])
+
+func _parse_dig(msg: String) -> void:
+	game_message.emit([Message.Type.DIG,msg])
+
+func _parse_moved(msg: String) -> void:
+	var params = msg.split(end_param,false)
+	if params.size() != 3:
+		printerr("Invalid moved message")
+		return
+	if !params[1].is_valid_int() or !params[2].is_valid_int():
+		printerr("Invalid move position: %s %s" % [params[1],params[2]])
+		return
+	
+	game_message.emit([Message.Type.MOVE,[
+		params[0],
+		Vector2i(int(params[1]),int(params[2]))
+	]])
+
+func _parse_attack(msg: String) -> void:
+	var params = msg.split(end_param,false)
+	if params.size() != 2:
+		printerr("Invalid attack message")
+		return
+	game_message.emit([Message.Type.ATTACK,[
+		params[0],
+		params[1]
+	]])
+
+func _parse_unit(msg: String) -> void:
+	var params = msg.split(end_param,false)
+	if params.size() != 4:
+		printerr("Invalid new unit message")
+		return
+		
+	if !params[2].is_valid_int() or !params[3].is_valid_int():
+		printerr("Invalid new unit position: %s %s" % [params[2],params[3]])
+		return
+		
+	game_message.emit([Message.Type.UNIT,[
+		params[0],
+		params[1],
+		Vector2i(int(params[2]),int(params[3]))
+	]])
+
+func _parse_field_resource(msg: String) -> void:
+	var params = msg.split(end_param,false)
+	if params.size() != 3:
+		printerr("Invalid new resource message")
+		return
+	if !params[0].is_valid_int() or !params[1].is_valid_int():
+		printerr("Invalid new resource position: %s %s" % [params[0],params[1]])
+		return
+	if !params[2].is_valid_int():
+		printerr("Invalid new resource hp: %s" % params[2])
+		return
+	game_message.emit([Message.Type.FIELD_RESOURCE,[
+		Vector2i(int(params[0]),int(params[1])),
+		params[2]
+	]])
+	
 func _handle_msg(msg: String) -> void:
 	var decoded: Array = Message.decode(msg)
 	var type = decoded[0]
@@ -150,8 +226,22 @@ func _handle_msg(msg: String) -> void:
 		return
 		
 	match type:
-		Message.Type.GAME_JOINED:
-			_parse_game_joined(decoded[1])
+		Message.Type.MOVE:
+			_parse_moved(decoded[1])
+		Message.Type.ATTACK:
+			_parse_attack(decoded[1])
+		Message.Type.DIG:
+			_parse_dig(decoded[1])
+		Message.Type.UNIT:
+			_parse_unit(decoded[1])
+		Message.Type.FIELD_RESOURCE:
+			_parse_field_resource(decoded[1])
+		Message.Type.CONFIGURATION:
+			_parse_configuration(decoded[1])
+		Message.Type.JOIN:
+			_parse_join_left(type, decoded[1])
+		Message.Type.LEFT:
+			_parse_join_left(type, decoded[1])
 		Message.Type.PLAYERS_STATE:
 			_parse_players_state(decoded[1])
 		Message.Type.RESOURCES_STATE:

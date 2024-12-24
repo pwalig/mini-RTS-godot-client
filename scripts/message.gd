@@ -3,12 +3,20 @@ class_name Message extends Script
 enum Type{
 	NAME,
 	JOIN,
-	GAME_JOINED,
 	QUIT,
-	INVALID,
+	MOVE,
+	ATTACK,
+	DIG, # as 'm' is used by MOVE
+	CONFIGURATION,
+	LEFT,
+	UNIT,
+	FIELD_RESOURCE,
+	TICK,
 	QUEUED,
 	YES,
 	NO,
+	LOST,
+	WON,
 	PLAYERS_STATE,
 	RESOURCES_STATE
 }
@@ -17,16 +25,28 @@ const _header_byte_map = {
 	Type.NAME: "n",
 	Type.JOIN: "j",
 	Type.QUIT: "q",
+	Type.MOVE: "m",
+	Type.ATTACK: "a",
+	Type.DIG: "d",
 }
 
 const _byte_header_map = {
-	"i": Type.INVALID,
-	"g": Type.GAME_JOINED,
+	"c": Type.CONFIGURATION,
+	"j": Type.JOIN,
+	"l": Type.LEFT,
+	"m": Type.MOVE,
+	"a": Type.ATTACK,
+	"d": Type.DIG,
+	"u": Type.UNIT,
+	"f": Type.FIELD_RESOURCE,
+	"t": Type.TICK,
 	"q": Type.QUEUED,
 	"y": Type.YES,
 	"n": Type.NO,
+	"L": Type.LOST,
+	"W": Type.WON,
 	"p": Type.PLAYERS_STATE,
-	"r": Type.RESOURCES_STATE
+	"r": Type.RESOURCES_STATE,
 }
 
 static func encode(type: Type, value = null) -> PackedByteArray:

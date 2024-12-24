@@ -53,6 +53,6 @@ func _on_zoom_change(zoom: float) -> void:
 		$HPBar.visible = true
 
 func _ready():
-	$HPBar.max_value = CONFIG.max_unit_health
+	$HPBar.max_value = CONFIG.unitHp
 	var cam: GameCamera = get_tree().get_first_node_in_group("camera")
 	cam.zoom_change.connect(self._on_zoom_change)
