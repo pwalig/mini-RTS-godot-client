@@ -27,8 +27,9 @@ func _on_game_message(msg: Array) -> void:
 		Message.Type.ATTACK:
 			$Map.queue_attack_unit(msg[1])
 		Message.Type.UNIT:
-			var params: Array = msg[1]
-			$Map.spawn_unit(params[0], params[1], params[2])
+			#var params: Array = msg[1]
+			#$Map.spawn_unit(params[0], params[1], params[2])
+			$Map.spawn_unit_arr(msg[1])
 		Message.Type.FIELD_RESOURCE:
 			$Map.spawn_resource(msg[1])
 		Message.Type.PLAYERS_STATE:

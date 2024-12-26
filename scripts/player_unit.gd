@@ -37,8 +37,8 @@ func set_target_cell(cell: Vector2i) -> void:
 	selected = false
 	_current_path.clear()
 	# check if attack unit
-	if map.unit_map.has(cell):
-		var target_unit = map.unit_map.get(cell)
+	if map.pos_unit_map.has(cell):
+		var target_unit = map.pos_unit_map.get(cell)
 		if target_unit.is_in_group("player_units"):
 			_target = [Action.MOVE, cell] # we don't want friendly fire
 		else:
@@ -87,10 +87,8 @@ func _recalculate_path() -> void:
 	#print(cell_position, _current_path)
 
 func _get_display_next_path_point() -> Vector2i:
-	var recalculated: bool = false
 	if _current_path.is_empty():
 		_recalculate_path()
-		recalculated = true
 		if _current_path.is_empty():
 			return cell_position
 			

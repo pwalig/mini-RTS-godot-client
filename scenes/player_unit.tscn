@@ -18,7 +18,7 @@ shader_parameter/angle_step = 0.5
 z_index = 1
 material = SubResource("ShaderMaterial_5vdn7")
 sprite_frames = ExtResource("1_38p32")
-animation = &"attack"
+animation = &"idle"
 centered = false
 script = ExtResource("2_8cqfp")
 

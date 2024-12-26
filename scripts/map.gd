@@ -7,7 +7,8 @@ var unit_s = preload("res://scenes/unit.tscn")
 var player_unit_s = preload("res://scenes/player_unit.tscn")
 var player_nick: String = ""
 
-var unit_map: Dictionary = {}
+var pos_unit_map: Dictionary = {}
+var owner_unit_map: Dictionary = {}
 
 var tick_moves_map: Dictionary = {}
 
@@ -60,7 +61,7 @@ func _on_ready_for_new_select(_cell) -> void:
 
 func spawn_unit(owner_nick: String, id: String, pos: Vector2i) -> void:
 	if $units.get_node_or_null(id):
-		printerr("Tried to spawn node with existing id: %s" % id)
+		printerr("Tried to spawn unit with existing id: %s" % id)
 		return
 	var unit
 	if owner_nick == player_nick: # unit belongs to local player
@@ -75,25 +76,29 @@ func spawn_unit(owner_nick: String, id: String, pos: Vector2i) -> void:
 	unit.cell_position = pos
 	$units.add_child(unit)
 	
-	unit_map[pos] = unit
+	pos_unit_map[pos] = unit
+	owner_unit_map[owner_nick] = unit
 	astar.set_point_solid(pos, true)
+
+func spawn_unit_arr(msg: Array) -> void:
+	spawn_unit(msg[0],msg[1],msg[2])
 
 func spawn_resource(msg: Array) -> void:
 	# resource hp = msg[1]
 	$resources.set_cell(msg[0], 1, Vector2i.ZERO)
 
 func _try_move_unit(id: String, pos: Vector2i) -> void:
-	if unit_map.has(pos):
+	if pos_unit_map.has(pos):
 		return
 	var unit = $units.get_node_or_null(id)
 	if !unit:
 		return
 	
-	unit_map[pos] = unit
+	pos_unit_map[pos] = unit
 	astar.set_point_solid(pos, true)
 	$unit_markers.set_cell(pos, 2, Vector2i.ZERO)
 	
-	unit_map.erase(unit.cell_position)
+	pos_unit_map.erase(unit.cell_position)
 	astar.set_point_solid(unit.cell_position, false)
 	$unit_markers.erase_cell(unit.cell_position)
 	
@@ -101,7 +106,8 @@ func _try_move_unit(id: String, pos: Vector2i) -> void:
 
 func _kill_unit(unit: Unit) -> void:
 	var pos: Vector2i = unit.cell_position
-	unit_map.erase(pos)
+	owner_unit_map.erase(unit.owner_nick)
+	pos_unit_map.erase(pos)
 	astar.set_point_solid(pos, false)
 	$unit_markers.erase_cell(pos)
 	unit.die()
@@ -114,7 +120,6 @@ func queue_mine_resource(msg: Array) -> void:
 
 func queue_attack_unit(msg: Array) -> void:
 	tick_moves_map[msg[0]] = [Message.Type.ATTACK, msg[1], msg[2]]
-
 
 func commit_moves() -> void:
 	for id in tick_moves_map:

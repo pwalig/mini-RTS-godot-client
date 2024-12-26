@@ -1,7 +1,6 @@
 class_name Parser
 extends Script
 
-const end_msg = CONFIG.end_msg
 const end_section = CONFIG.end_section
 const end_subsection = CONFIG.end_subsection
 const end_param = CONFIG.end_param

@@ -48,7 +48,3 @@ script = ExtResource("6_51i5a")
 unique_name_in_owner = true
 zoom = Vector2(0.2, 0.2)
 script = ExtResource("2_ry7wv")
-
-[node name="TestGameTick" type="Timer" parent="."]
-
-[connection signal="timeout" from="TestGameTick" to="." method="_new_game_tick"]
