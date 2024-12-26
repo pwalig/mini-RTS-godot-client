@@ -113,12 +113,9 @@ func _print_message(msg: Array) -> void:
 		print(Message.Type.keys()[msg[0]], msg[1])
 
 func _on_game_message(msg: Array) -> void:
-	var type: Message.Type = msg[0]
-	
-	#if type != Message.Type.RESOURCES_STATE:
-		#_print_message(msg)
 	_print_message(msg)
 	
+	var type: Message.Type = msg[0]
 	match type:
 		Message.Type.PLAYERS_STATE:
 			if _game_state != GameState.PLAYING:

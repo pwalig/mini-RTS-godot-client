@@ -191,7 +191,9 @@ static var _handler_map: Dictionary = {
 	Message.Type.UNIT: _parse_unit,
 	Message.Type.FIELD_RESOURCE: _parse_field_resource,
 	Message.Type.PLAYERS_STATE: _parse_players_state,
-	Message.Type.RESOURCES_STATE: _parse_resources_state
+	Message.Type.RESOURCES_STATE: _parse_resources_state,
+	Message.Type.LOST: _parse_str,
+	Message.Type.WON: _parse_str
 }
 
 static func parse(msg: String) -> Array:

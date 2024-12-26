@@ -9,7 +9,7 @@ signal error
 
 const end_msg = CONFIG.end_msg
 
-var _msg_queue: Array[PackedByteArray] = []
+var _msg_queue: PackedByteArray = PackedByteArray([])
 
 func _set_host(new_host: String) -> void:
 	host = new_host
@@ -27,7 +27,7 @@ func _on_connected() -> void:
 func _on_disconnected() -> void:
 	error.emit()
 
-func _on_error(err: int) -> void:
+func _on_error(_err: int) -> void:
 	connection_result.emit(false)
 	error.emit()
 
@@ -63,13 +63,13 @@ func disconnect_from_host() -> void:
 	_client.disconnect_from_host()
 
 func send_msg(msg: Message.Type):
-	_msg_queue.append(Message.encode(msg))
+	_msg_queue.append_array(Message.encode(msg))
 
 func send_msg_str(type: Message.Type, val: String):
-	_msg_queue.append(Message.encode_str(type, val))
+	_msg_queue.append_array(Message.encode_str(type, val))
 
 func send_msg_params(type: Message.Type, params: Array):
-	_msg_queue.append(Message.encode_params(type, params))
+	_msg_queue.append_array(Message.encode_params(type, params))
 	
 func _send_partial_msg(msg: PackedByteArray) -> int:
 	var res = _client.send(msg)
@@ -79,7 +79,5 @@ func _send_partial_msg(msg: PackedByteArray) -> int:
 
 func _process(_delta):
 	if !_msg_queue.is_empty():
-		var msg: PackedByteArray = _msg_queue.pop_front()
-		var sent = _send_partial_msg(msg)
-		if sent < msg.size():
-			_msg_queue.push_front(msg.slice(sent+1))
+		var sent = _send_partial_msg(_msg_queue)
+		_msg_queue = _msg_queue.slice(sent)
