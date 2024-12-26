@@ -7,7 +7,7 @@ func init_game(player_nick: String) -> void:
 
 func _ready():
 	TcpConnection.game_message.connect(self._on_game_message)
-	
+
 func _on_game_message(msg: Array) -> void:
 	match msg[0]:
 		Message.Type.TICK:
@@ -26,6 +26,8 @@ func _on_game_message(msg: Array) -> void:
 			$Map.update_players(msg[1])
 		Message.Type.RESOURCES_STATE:
 			$Map.update_resources(msg[1])
+		Message.Type.LEFT:
+			$Map.kill_player_units(msg[1])
 
 func _new_game_tick() -> void:
 	$Map.commit_moves()

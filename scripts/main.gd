@@ -110,7 +110,7 @@ func _print_message(msg: Array) -> void:
 	if msg.size() == 1:
 		print(Message.Type.keys()[msg[0]])
 	else:
-		print(Message.Type.keys()[msg[0]], msg[1])
+		prints(Message.Type.keys()[msg[0]], msg[1])
 
 func _on_game_message(msg: Array) -> void:
 	_print_message(msg)

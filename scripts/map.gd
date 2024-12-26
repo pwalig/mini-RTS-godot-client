@@ -77,7 +77,7 @@ func spawn_unit(owner_nick: String, id: String, pos: Vector2i) -> void:
 	$units.add_child(unit)
 	
 	pos_unit_map[pos] = unit
-	owner_unit_map[owner_nick] = unit
+	owner_unit_map.get_or_add(owner_nick,[]).append(unit)
 	astar.set_point_solid(pos, true)
 
 func spawn_unit_arr(msg: Array) -> void:
@@ -86,6 +86,14 @@ func spawn_unit_arr(msg: Array) -> void:
 func spawn_resource(msg: Array) -> void:
 	# resource hp = msg[1]
 	$resources.set_cell(msg[0], 1, Vector2i.ZERO)
+
+func kill_player_units(player_nick: String) -> void:
+	print("Killing all units of: %s" % player_nick)
+	if not player_nick in owner_unit_map:
+		print("%s had no units" % player_nick)
+		return
+	for unit: Unit in owner_unit_map[player_nick].duplicate():
+		_kill_unit(unit)
 
 func _try_move_unit(id: String, pos: Vector2i) -> void:
 	if pos_unit_map.has(pos):
@@ -106,7 +114,9 @@ func _try_move_unit(id: String, pos: Vector2i) -> void:
 
 func _kill_unit(unit: Unit) -> void:
 	var pos: Vector2i = unit.cell_position
-	owner_unit_map.erase(unit.owner_nick)
+	if owner_unit_map.has(unit.owner_nick):
+		var a: Array = owner_unit_map[unit.owner_nick]
+		a.erase(unit)
 	pos_unit_map.erase(pos)
 	astar.set_point_solid(pos, false)
 	$unit_markers.erase_cell(pos)
