@@ -37,10 +37,6 @@ func update_players(players: Dictionary) -> void:
 			else:
 				unit.cell_position = pos
 				unit.hp = unit_data[3]
-				unit.keep_alive = true
-	
-	for unit: Unit in $units.get_children():
-		unit.die_if_should()
 
 func _ready():
 	astar.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_NEVER
@@ -62,12 +58,12 @@ func _on_ready_for_new_select(_cell) -> void:
 	%SelectRect.set_deferred("active", true)
 	%Select.cell_released.disconnect(self._on_ready_for_new_select)
 
-func spawn_unit(owner: String, id: String, pos: Vector2i) -> void:
+func spawn_unit(owner_nick: String, id: String, pos: Vector2i) -> void:
 	if $units.get_node_or_null(id):
 		printerr("Tried to spawn node with existing id: %s" % id)
 		return
 	var unit
-	if owner == player_nick: # unit belongs to local player
+	if owner_nick == player_nick: # unit belongs to local player
 		unit = player_unit_s.instantiate()
 		if get_tree().get_node_count_in_group("player_units") == 0:
 			%Camera.position = CONFIG.tilesize * Vector2(pos)
@@ -75,9 +71,8 @@ func spawn_unit(owner: String, id: String, pos: Vector2i) -> void:
 	else:
 		unit = unit_s.instantiate()
 	unit.name = id
-	unit.owner_nick = owner
+	unit.owner_nick = owner_nick
 	unit.cell_position = pos
-	unit.keep_alive = true
 	$units.add_child(unit)
 	
 	unit_map[pos] = unit
@@ -104,14 +99,21 @@ func _try_move_unit(id: String, pos: Vector2i) -> void:
 	
 	unit.cell_position = pos
 
+func _kill_unit(unit: Unit) -> void:
+	var pos: Vector2i = unit.cell_position
+	unit_map.erase(pos)
+	astar.set_point_solid(pos, false)
+	$unit_markers.erase_cell(pos)
+	unit.die()
+
 func queue_move_unit(msg: Array) -> void:
 	tick_moves_map[msg[0]] = [Message.Type.MOVE, msg[1]]
 
-func queue_mine_resource(msg: String) -> void:
-	tick_moves_map[msg] = [Message.Type.DIG]
+func queue_mine_resource(msg: Array) -> void:
+	tick_moves_map[msg[0]] = [Message.Type.DIG, msg[1]]
 
 func queue_attack_unit(msg: Array) -> void:
-	tick_moves_map[msg[0]] = [Message.Type.ATTACK, msg[1]]
+	tick_moves_map[msg[0]] = [Message.Type.ATTACK, msg[1], msg[2]]
 
 
 func commit_moves() -> void:
@@ -124,11 +126,17 @@ func commit_moves() -> void:
 				var unit = $units.get_node_or_null(id)
 				if unit:
 					unit.call_deferred("mine")
+					var hpLeft: int = tick_moves_map[id][1]
+					if hpLeft <= 0:
+						$resources.erase_cell(unit.cell_position)
 			Message.Type.ATTACK:
 				var attacker = $units.get_node_or_null(id)
 				var attacked = $units.get_node_or_null(tick_moves_map[id][1])
+				var hpLeft: int = tick_moves_map[id][2]
 				if attacker:
 					attacker.call_deferred("attack")
 				if attacked:
-					attacked.hp -= CONFIG.unitDamage
+					attacked.hp = hpLeft
+					if hpLeft <= 0:
+						_kill_unit(attacked)
 	tick_moves_map.clear()

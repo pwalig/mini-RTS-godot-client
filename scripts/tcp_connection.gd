@@ -134,8 +134,21 @@ func _parse_configuration(msg: String) -> void:
 func _parse_join_left(type: Message.Type, msg: String) -> void:
 	game_message.emit([type,msg])
 
+func _parse_join(msg: String) -> void:
+	game_message.emit([Message.Type.JOIN,msg])
+
 func _parse_dig(msg: String) -> void:
-	game_message.emit([Message.Type.DIG,msg])
+	var params = msg.split(end_param,false)
+	if params.size() != 2:
+		printerr("Invalid dig message")
+		return
+	if !params[1].is_valid_int():
+		printerr("Invalid resource hp left: %s" % params[1])
+		return
+	game_message.emit([Message.Type.DIG,[
+		params[0],
+		int(params[1])
+	]])
 
 func _parse_moved(msg: String) -> void:
 	var params = msg.split(end_param,false)
@@ -153,12 +166,16 @@ func _parse_moved(msg: String) -> void:
 
 func _parse_attack(msg: String) -> void:
 	var params = msg.split(end_param,false)
-	if params.size() != 2:
+	if params.size() != 3:
 		printerr("Invalid attack message")
+		return
+	if !params[2].is_valid_int():
+		printerr("Invalid attack hp left: %s" % params[2])
 		return
 	game_message.emit([Message.Type.ATTACK,[
 		params[0],
-		params[1]
+		params[1],
+		int(params[2])
 	]])
 
 func _parse_unit(msg: String) -> void:
@@ -192,37 +209,41 @@ func _parse_field_resource(msg: String) -> void:
 		Vector2i(int(params[0]),int(params[1])),
 		int(params[2])
 	]])
-	
+
 func _handle_msg(msg: String) -> void:
-	var decoded: Array = Message.decode(msg)
-	var type = decoded[0]
-	if type == null:
-		printerr("Invalid message")
-		return
-		
-	match type:
-		Message.Type.MOVE:
-			_parse_moved(decoded[1])
-		Message.Type.ATTACK:
-			_parse_attack(decoded[1])
-		Message.Type.DIG:
-			_parse_dig(decoded[1])
-		Message.Type.UNIT:
-			_parse_unit(decoded[1])
-		Message.Type.FIELD_RESOURCE:
-			_parse_field_resource(decoded[1])
-		Message.Type.CONFIGURATION:
-			_parse_configuration(decoded[1])
-		Message.Type.JOIN:
-			_parse_join_left(type, decoded[1])
-		Message.Type.LEFT:
-			_parse_join_left(type, decoded[1])
-		Message.Type.PLAYERS_STATE:
-			_parse_players_state(decoded[1])
-		Message.Type.RESOURCES_STATE:
-			_parse_resources_state(decoded[1])
-		_:
-			game_message.emit([type])
+	var parsed: Array = Parser.parse(msg)
+	if parsed:
+		game_message.emit(parsed)
+#func _handle_msg(msg: String) -> void:
+	#var decoded: Array = Message.decode(msg)
+	#var type = decoded[0]
+	#if type == null:
+		#printerr("Invalid message")
+		#return
+		#
+	#match type:
+		#Message.Type.MOVE:
+			#_parse_moved(decoded[1])
+		#Message.Type.ATTACK:
+			#_parse_attack(decoded[1])
+		#Message.Type.DIG:
+			#_parse_dig(decoded[1])
+		#Message.Type.UNIT:
+			#_parse_unit(decoded[1])
+		#Message.Type.FIELD_RESOURCE:
+			#_parse_field_resource(decoded[1])
+		#Message.Type.CONFIGURATION:
+			#_parse_configuration(decoded[1])
+		#Message.Type.JOIN:
+			#_parse_join_left(type, decoded[1])
+		#Message.Type.LEFT:
+			#_parse_join_left(type, decoded[1])
+		#Message.Type.PLAYERS_STATE:
+			#_parse_players_state(decoded[1])
+		#Message.Type.RESOURCES_STATE:
+			#_parse_resources_state(decoded[1])
+		#_:
+			#game_message.emit([type])
 
 func _on_partial_data(data: String) -> void:
 	if !data.contains(end_msg):

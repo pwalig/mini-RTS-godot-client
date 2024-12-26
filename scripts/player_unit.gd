@@ -135,7 +135,6 @@ func _calculate_next_action() -> Array:
 				_target.clear()
 				return []
 			if cell_position.distance_to(_target[1].cell_position) <= 1.0:
-				print("attack")
 				return [Action.ATTACK, cell_position, _target[1].cell_position]
 			_current_path.clear()
 			var cell = _get_display_next_path_point()

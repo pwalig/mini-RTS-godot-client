@@ -32,9 +32,6 @@ func set_hp(new_hp: int) -> void:
 	hp = new_hp
 	$HPBar.value = new_hp
 
-var keep_alive: bool = false
-var dying: bool = false
-
 func attack() -> void:
 	play("attack")
 	await create_tween().tween_interval(CONFIG.anim_duration).finished
@@ -45,14 +42,7 @@ func mine() -> void:
 	await create_tween().tween_interval(CONFIG.anim_duration).finished
 	play("idle")
 
-func die_if_should() -> void:
-	if !keep_alive and !dying:
-		dying = true
-		_die()
-	else:
-		keep_alive = false
-
-func _die() -> void:
+func die() -> void:
 	call_deferred("queue_free")
 
 func _on_zoom_change(zoom: float) -> void:
