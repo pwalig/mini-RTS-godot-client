@@ -33,7 +33,7 @@ float outline_mask(sampler2D tex, vec2 uv){
 }
 
 void fragment() {
-	vec4 col = texture(TEXTURE, UV);
+	vec4 col = texture(TEXTURE, UV) * COLOR;
 	if(selected){
 		float a = 1.0;
 		if(outline_width < max_width){

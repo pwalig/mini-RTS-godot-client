@@ -1,6 +1,13 @@
 class_name PlayerUnit
 extends Unit
 
+func set_owner_nick(nick: String) -> void:
+	owner_nick = nick
+	$OwnerNickLabel.text = nick
+	var hue = (abs(hash(nick)) % 256) / 256.0
+	self_modulate = Color.from_hsv(hue, 1.0, 1.0)
+	material.set("shader_parameter/outline_color",Color.from_hsv(hue + 0.5, 1.0, 1.0))
+
 enum Action{
 	MOVE,
 	ATTACK,
