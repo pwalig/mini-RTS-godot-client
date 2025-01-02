@@ -5,7 +5,8 @@ enum GameState{
 	WAIT_FOR_CONNECTION,
 	MENU_CONNECTED,
 	QUEUE,
-	PLAYING
+	PLAYING,
+	GAME_FINISHED
 }
 
 const _menu_states = [GameState.MENU_INIT, GameState.WAIT_FOR_CONNECTION, GameState.MENU_CONNECTED]
@@ -24,12 +25,15 @@ func _set_game_state(new_state: GameState) -> void:
 			_switch_to_menu(true)
 		GameState.MENU_CONNECTED:
 			_switch_to_menu(false)
+		GameState.GAME_FINISHED:
+			_switch_to_game_end()
 	_game_state = new_state
 	print("Game state: ",GameState.keys()[_game_state])
 
 var main_menu_s = preload("res://scenes/main_menu.tscn")
 var game_s = preload("res://scenes/game.tscn")
 var queue_s = preload("res://scenes/queued.tscn")
+var finished_s = preload("res://scenes/game_finished.tscn")
 
 var _player_nick: String = ""
 
@@ -65,6 +69,13 @@ func _switch_to_queue() -> void:
 		child.queue_free()
 	var queued = queue_s.instantiate()
 	add_child(queued)
+
+func _switch_to_game_end() -> void:
+	if _game_state == GameState.GAME_FINISHED:
+		return
+	for child in get_children():
+		child.queue_free()
+	add_child(finished_s.instantiate())
 
 func _on_join_game() -> void:
 	var menu = get_node_or_null("MainMenu")
@@ -125,6 +136,21 @@ func _on_game_message(msg: Array) -> void:
 			CONFIG.apply(msg[1])
 		Message.Type.QUEUED:
 			_game_state = GameState.QUEUE
+		Message.Type.LEFT:
+			if msg[1] == _player_nick:
+				_game_state = GameState.GAME_FINISHED
+				var gf = get_node("GameFinished") as GameFinished
+				gf.has_won = false
+				gf.set_reason(GameFinished.LoseReason.NO_UNITS)
+		Message.Type.LOST:
+			_game_state = GameState.GAME_FINISHED
+			var gf = get_node("GameFinished") as GameFinished
+			gf.has_won = false
+			gf.set_reason(GameFinished.LoseReason.OTHER_WON,msg[1])
+		Message.Type.WON:
+			_game_state = GameState.GAME_FINISHED
+			var gf = get_node("GameFinished") as GameFinished
+			gf.has_won = true
 
 func _input(event):
 	if event.is_action_pressed("ui_cancel"):

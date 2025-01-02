@@ -1,15 +1,15 @@
-[gd_scene load_steps=2 format=3 uid="uid://c662f5yfguqes"]
+[gd_scene load_steps=2 format=3 uid="uid://co86fe4kxvxra"]
 
-[ext_resource type="Script" path="res://scripts/queued.gd" id="1_uuj66"]
+[ext_resource type="Script" path="res://scripts/game_finished.gd" id="1_mlhho"]
 
-[node name="Queued" type="Control"]
+[node name="GameFinished" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_uuj66")
+script = ExtResource("1_mlhho")
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
 custom_minimum_size = Vector2(250, 300)
@@ -35,8 +35,13 @@ theme_override_font_sizes/font_size = 30
 text = "Mini RTS"
 horizontal_alignment = 1
 
-[node name="Label" type="Label" parent="PanelContainer/VBoxContainer"]
+[node name="Msg" type="Label" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
-text = "Game room is full
-please wait"
+text = "YOU LOST"
+horizontal_alignment = 1
+
+[node name="Reason" type="Label" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
 horizontal_alignment = 1
