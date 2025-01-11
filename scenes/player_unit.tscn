@@ -1,0 +1,26 @@
+[gd_scene load_steps=5 format=3 uid="uid://l7msn1pxyxoy"]
+
+[ext_resource type="Shader" path="res://shaders/player_unit.gdshader" id="1_16h3l"]
+[ext_resource type="PackedScene" uid="uid://b5wnwudwah5rq" path="res://scenes/unit.tscn" id="1_b42fj"]
+[ext_resource type="Script" path="res://scripts/player_unit.gd" id="2_8cqfp"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_w05io"]
+resource_local_to_scene = true
+shader = ExtResource("1_16h3l")
+shader_parameter/outline_width = 0.02
+shader_parameter/max_width = 0.1
+shader_parameter/outline_color = Color(0, 0, 1, 1)
+shader_parameter/selected = false
+shader_parameter/angle_step = 0.5
+
+[node name="PlayerUnit" groups=["player_units"] instance=ExtResource("1_b42fj")]
+material = SubResource("ShaderMaterial_w05io")
+script = ExtResource("2_8cqfp")
+selected = false
+outline_width = 0.02
+
+[node name="Path" type="Line2D" parent="." index="2"]
+top_level = true
+position = Vector2(128, 128)
+joint_mode = 2
+end_cap_mode = 2

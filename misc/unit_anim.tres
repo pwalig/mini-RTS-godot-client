@@ -1,0 +1,57 @@
+[gd_resource type="SpriteFrames" load_steps=9 format=3 uid="uid://cadit7ce4qfwp"]
+
+[ext_resource type="Texture2D" uid="uid://rfdl274ixbnv" path="res://images/warrior-attack.png" id="1_jru21"]
+[ext_resource type="Texture2D" uid="uid://bo3gpg0ggtv43" path="res://images/warrior-idle.png" id="2_swfl5"]
+[ext_resource type="Texture2D" uid="uid://d23ryac6hcrrg" path="res://images/warrior-mine.png" id="3_ix5k2"]
+[ext_resource type="Texture2D" uid="uid://djhw4g4mbayq1" path="res://images/warrior-run.png" id="4_a1rvs"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_055f6"]
+atlas = ExtResource("1_jru21")
+region = Rect2(0, 0, 256, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_66v1s"]
+atlas = ExtResource("2_swfl5")
+region = Rect2(0, 0, 256, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4fsly"]
+atlas = ExtResource("3_ix5k2")
+region = Rect2(0, 0, 256, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_31xpi"]
+atlas = ExtResource("4_a1rvs")
+region = Rect2(0, 0, 256, 256)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_055f6")
+}],
+"loop": true,
+"name": &"attack",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_66v1s")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4fsly")
+}],
+"loop": true,
+"name": &"mine",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_31xpi")
+}],
+"loop": true,
+"name": &"run",
+"speed": 5.0
+}]

@@ -1,0 +1,50 @@
+[gd_scene load_steps=8 format=3 uid="uid://bilcgnldwvcxg"]
+
+[ext_resource type="TileSet" uid="uid://cys1bn3hn4i0r" path="res://misc/game_tileset.tres" id="1_3oqo2"]
+[ext_resource type="Script" path="res://scripts/game.gd" id="1_42pc8"]
+[ext_resource type="Script" path="res://scripts/map.gd" id="1_khhe5"]
+[ext_resource type="Script" path="res://scripts/camera.gd" id="2_ry7wv"]
+[ext_resource type="Texture2D" uid="uid://dcyyvs22p7epv" path="res://images/tile-frame.png" id="4_62fe3"]
+[ext_resource type="Script" path="res://scripts/select_rect.gd" id="6_51i5a"]
+[ext_resource type="Script" path="res://scripts/select.gd" id="7_fkkkv"]
+
+[node name="Game" type="Node2D"]
+script = ExtResource("1_42pc8")
+
+[node name="Map" type="Node2D" parent="." groups=["map"]]
+unique_name_in_owner = true
+script = ExtResource("1_khhe5")
+
+[node name="ground" type="TileMapLayer" parent="Map"]
+unique_name_in_owner = true
+tile_set = ExtResource("1_3oqo2")
+
+[node name="resources" type="TileMapLayer" parent="Map"]
+z_index = 1
+tile_map_data = PackedByteArray(0, 0, 2, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0)
+tile_set = ExtResource("1_3oqo2")
+
+[node name="unit_markers" type="TileMapLayer" parent="Map"]
+tile_set = ExtResource("1_3oqo2")
+
+[node name="units" type="Node2D" parent="Map"]
+
+[node name="selection" type="Node2D" parent="Map"]
+
+[node name="Select" type="Sprite2D" parent="Map/selection"]
+unique_name_in_owner = true
+texture = ExtResource("4_62fe3")
+centered = false
+script = ExtResource("7_fkkkv")
+
+[node name="SelectRect" type="Line2D" parent="Map/selection"]
+unique_name_in_owner = true
+visible = false
+points = PackedVector2Array(0, 0, 256, 0, 256, 256, 0, 256)
+closed = true
+script = ExtResource("6_51i5a")
+
+[node name="Camera" type="Camera2D" parent="." groups=["camera"]]
+unique_name_in_owner = true
+zoom = Vector2(0.2, 0.2)
+script = ExtResource("2_ry7wv")

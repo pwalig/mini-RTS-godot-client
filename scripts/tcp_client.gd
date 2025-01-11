@@ -5,6 +5,8 @@ signal disconnected
 signal data
 signal error
 
+const DATA_UTF8 = true
+
 var _tcp_stream: StreamPeerTCP = StreamPeerTCP.new()
 var _status: int
 	
@@ -16,13 +18,13 @@ func connect_to_host(host: String, port: int) -> void:
 		printerr("Connection error")
 		error.emit(err)
 
-func send(data_to_send: PackedByteArray) -> bool:
+func disconnect_from_host() -> void:
+	_tcp_stream.disconnect_from_host()
+
+func send(data_to_send: PackedByteArray) -> Array:
 	if _status != _tcp_stream.STATUS_CONNECTED:
-		return false
-	var err: int = _tcp_stream.put_data(data_to_send)
-	if err != OK:
-		return false
-	return true
+		return [1,0]
+	return _tcp_stream.put_partial_data(data_to_send)
 
 func _status_updated(new_status: int) -> void:
 	_status = new_status
@@ -42,6 +44,8 @@ func _status_updated(new_status: int) -> void:
 func _try_recieve_data() -> void:
 	if _status != _tcp_stream.STATUS_CONNECTED:
 		return
+	if data.get_connections().is_empty():
+		return
 	var avaliable: int = _tcp_stream.get_available_bytes()
 	if avaliable <= 0:
 		return
@@ -49,7 +53,8 @@ func _try_recieve_data() -> void:
 	if partial_data[0] != OK:
 		printerr("get_partial_data error")
 		return
-	data.emit(partial_data[1])
+		
+	data.emit(partial_data[1].get_string_from_utf8())
 
 func _ready():
 	_status = _tcp_stream.get_status()
