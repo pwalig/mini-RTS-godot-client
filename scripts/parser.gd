@@ -104,6 +104,8 @@ static func _parse_configuration(msg: String) -> Array:
 	return parsed
 
 static func _parse_str(msg: String) -> String:
+	if msg.is_empty():
+		printerr("_parse_str: empty message!")
 	return msg
 
 static func _parse_dig(msg: String) -> Array:
@@ -200,12 +202,13 @@ static func parse(msg: String) -> Array:
 	var decoded: Array = Message.decode(msg)
 	var type = decoded[0]
 	if type == null:
-		printerr("Invalid message")
+		printerr("Invalid type of message: %s" % msg)
 		return []
 	
 	if _handler_map.has(type):
 		var parsed = _handler_map[type].call(decoded[1])
 		if !parsed:
+			printerr("Could not parse %s message: %s" % [Message.Type.keys()[type], decoded[1]])
 			return []
 		return [type, parsed]
 	
