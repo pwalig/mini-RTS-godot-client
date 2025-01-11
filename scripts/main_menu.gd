@@ -27,6 +27,13 @@ func _on_join_game_button_pressed():
 func player_nick() -> String:
 	return %NickEdit.text
 
+func is_nick_valid(allowed: String = CONFIG.allowedNameCharacters) -> bool:
+	var ret: bool = true
+	var reg = RegEx.new()
+	reg.compile("^[%s]{1,20}$" % allowed)
+	# TODO get min and max length from config when implemented
+	return reg.search(%NickEdit.text) != null
+
 func set_nick(nick: String) -> void:
 	%NickEdit.text = nick
 

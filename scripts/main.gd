@@ -92,9 +92,19 @@ func _on_join_game() -> void:
 			_game_state = GameState.MENU_INIT
 			return
 	
-	var config = await TcpConnection.game_message
-	# TODO validate player nick using config here
-	
+		var res = await TcpConnection.game_message
+		if res[0] != Message.Type.CONFIGURATION:
+			printerr("Join game expected CONFIGURATION!")
+			menu.inform_user("Unexpected message from server!")
+			_exit_disconnect()
+			return
+		
+	if !menu.is_nick_valid():
+		print("Nick invalid!")
+		menu.inform_user("Nick invalid!")
+		menu.need_new_connection = false
+		return
+		
 	TcpConnection.send_msg_str(Message.Type.NAME, menu.player_nick())
 	var res = await TcpConnection.game_message
 	
@@ -152,9 +162,12 @@ func _on_game_message(msg: Array) -> void:
 			var gf = get_node("GameFinished") as GameFinished
 			gf.has_won = true
 
-func _input(event):
+func _exit_disconnect() -> void:
+	print("disconnecting")
+	TcpConnection.disconnect_from_host()
+	_game_state = GameState.MENU_INIT
+	get_node("MainMenu").need_new_connection = true
+
+func _input(event) -> void:
 	if event.is_action_pressed("ui_cancel"):
-		print("disconnecting")
-		TcpConnection.disconnect_from_host()
-		_game_state = GameState.MENU_INIT
-		get_node("MainMenu").need_new_connection = true
+		_exit_disconnect()
