@@ -33,6 +33,11 @@ func _set_selected(s: bool) -> void:
 	else:
 		remove_from_group("selected_units")
 
+func _move(pos: Vector2) -> void:
+	super(pos)
+	if $Path.get_point_count() > 0:
+		$Path.set_point_position(0, Vector2(cell_position) * CONFIG.tilesize)
+
 @export var outline_width: float = 0.02
 
 func _on_zoom_change(zoom: float):
