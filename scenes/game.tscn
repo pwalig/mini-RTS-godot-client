@@ -21,7 +21,6 @@ tile_set = ExtResource("1_3oqo2")
 
 [node name="resources" type="TileMapLayer" parent="Map"]
 z_index = 1
-tile_map_data = PackedByteArray(0, 0, 2, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0)
 tile_set = ExtResource("1_3oqo2")
 
 [node name="unit_markers" type="TileMapLayer" parent="Map"]
