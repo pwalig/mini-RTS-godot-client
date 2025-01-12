@@ -45,7 +45,10 @@ func _on_unit_request_action(_id: String, action: Array) -> void:
 				action[1].x, action[1].y
 				])
 		PlayerUnit.Action.ATTACK:
+			#TcpConnection.send_msg_params(Message.Type.ATTACK, [
+				#action[1].x, action[1].y,
+				#action[2].x, action[2].y
+				#])
 			TcpConnection.send_msg_params(Message.Type.ATTACK, [
-				action[1].x, action[1].y,
-				action[2].x, action[2].y
+				action[1], action[2]
 				])
