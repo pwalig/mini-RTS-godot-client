@@ -37,15 +37,14 @@ func _on_unit_request_action(_id: String, action: Array) -> void:
 	match action[0]:
 		PlayerUnit.Action.MOVE:
 			TcpConnection.send_msg_params(Message.Type.MOVE, [
-				action[1].x, action[1].y,
+				action[1],
 				action[2].x, action[2].y
 				])
 		PlayerUnit.Action.MINE:
 			TcpConnection.send_msg_params(Message.Type.DIG, [
-				action[1].x, action[1].y
+				action[1]
 				])
 		PlayerUnit.Action.ATTACK:
 			TcpConnection.send_msg_params(Message.Type.ATTACK, [
-				action[1].x, action[1].y,
-				action[2].x, action[2].y
+				action[1], action[2]
 				])
