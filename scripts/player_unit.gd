@@ -131,15 +131,18 @@ func _calculate_next_action() -> Array:
 				_target.clear()
 				return []
 			var cell = _get_display_next_path_point()
-			return [Action.MOVE, cell_position, cell]
+			#return [Action.MOVE, cell_position, cell]
+			return [Action.MOVE, name, cell]
 		Action.MINE:
 			if cell_position == _target[1]:
 				if resources.get_cell_source_id(cell_position) == -1:
 					_target.clear()
 					return []
-				return [Action.MINE, cell_position]
+				#return [Action.MINE, cell_position]
+				return [Action.MINE, name]
 			var cell = _get_display_next_path_point()
-			return [Action.MOVE, cell_position, cell]
+			#return [Action.MOVE, cell_position, cell]
+			return [Action.MOVE, name, cell]
 		Action.ATTACK:
 			if !is_instance_valid(_target[1]):
 				_target.clear()
@@ -149,7 +152,8 @@ func _calculate_next_action() -> Array:
 				return [Action.ATTACK, name, _target[1].name]
 			_current_path.clear()
 			var cell = _get_display_next_path_point()
-			return [Action.MOVE, cell_position, cell]
+			#return [Action.MOVE, cell_position, cell]
+			return [Action.MOVE, name, cell]
 	
 	return []
 
