@@ -36,26 +36,15 @@ func _on_unit_request_action(_id: String, action: Array) -> void:
 	#print(id,": ",PlayerUnit.Action.keys()[action[0]]," ", action[1])
 	match action[0]:
 		PlayerUnit.Action.MOVE:
-			#TcpConnection.send_msg_params(Message.Type.MOVE, [
-				#action[1].x, action[1].y,
-				#action[2].x, action[2].y
-				#])
 			TcpConnection.send_msg_params(Message.Type.MOVE, [
 				action[1],
 				action[2].x, action[2].y
 				])
 		PlayerUnit.Action.MINE:
-			#TcpConnection.send_msg_params(Message.Type.DIG, [
-				#action[1].x, action[1].y
-				#])
 			TcpConnection.send_msg_params(Message.Type.DIG, [
 				action[1]
 				])
 		PlayerUnit.Action.ATTACK:
-			#TcpConnection.send_msg_params(Message.Type.ATTACK, [
-				#action[1].x, action[1].y,
-				#action[2].x, action[2].y
-				#])
 			TcpConnection.send_msg_params(Message.Type.ATTACK, [
 				action[1], action[2]
 				])
