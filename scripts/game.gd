@@ -13,11 +13,11 @@ func _on_game_message(msg: Array) -> void:
 		Message.Type.TICK:
 			_new_game_tick()
 		Message.Type.MOVE:
-			$Map.queue_move_unit(msg[1])
+			$Map.handle_move(msg[1])
 		Message.Type.DIG:
-			$Map.queue_mine_resource(msg[1])
+			$Map.handle_dig(msg[1])
 		Message.Type.ATTACK:
-			$Map.queue_attack_unit(msg[1])
+			$Map.handle_attack(msg[1])
 		Message.Type.UNIT:
 			$Map.spawn_unit_arr(msg[1])
 		Message.Type.FIELD_RESOURCE:
@@ -30,7 +30,6 @@ func _on_game_message(msg: Array) -> void:
 			$Map.kill_player_units(msg[1])
 
 func _new_game_tick() -> void:
-	$Map.commit_moves()
 	get_tree().call_group("player_units","request_next_action")
 
 func _on_unit_request_action(_id: String, action: Array) -> void:
