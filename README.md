@@ -8,6 +8,7 @@ For instructions check [Godot documentation page](https://docs.godotengine.org/e
 about exporting projects.
 
 ## Controls
-* LMB select and command units
-* RMB look around
-* scroll zoom in and out
+* LMB - select and command units
+* RMB - look around
+* scroll - zoom in and out
+* escape - quit the game
